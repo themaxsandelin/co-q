@@ -18,7 +18,17 @@
       "url": "https://github.com/knallle"
     }
   ],
-  "keywords": [ "spotify", "music", "node.js" ],
+  "keywords": [
+    "spotify",
+    "music",
+    "node.js"
+  ],
   "main": "index.js",
-  "scripts": {}
+  "scripts": {
+    "site": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.16.0",
+    "express-handlebars": "^3.0.0"
+  }
 }
