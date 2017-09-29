@@ -1,0 +1,24 @@
+{
+  "name": "co-q",
+  "version": "1.0.0",
+  "description": "The ultimate music app for your event.",
+  "repository": "themaxsandelin/co-q.git",
+  "license": "MIT",
+  "author": {
+    "name": "Max Sandelin",
+    "url": "https://github.com/themaxsandelin"
+  },
+  "contributors": [
+    {
+      "name": "Johan Björk",
+      "url": "https://github.com/jobjork"
+    },
+    {
+      "name": "Karl Svensson",
+      "url": "https://github.com/knallle"
+    }
+  ],
+  "keywords": [ "spotify", "music", "node.js" ],
+  "main": "index.js",
+  "scripts": {}
+}

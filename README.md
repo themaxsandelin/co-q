@@ -1,5 +1,5 @@
-# Spotify Weekend Hack
-This is our project.
+# CO-Q
+The ultimate music app for your event.
 
 
 ## License
