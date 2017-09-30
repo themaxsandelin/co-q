@@ -162,7 +162,8 @@ app.get('/event/:slug', (req, res) => {
     UserController.getAccessTokens()
       .then((tokens) => {        
         SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {                           
+            .then((tracks) => {
+              var mseAndSongs = [];                          
               async.eachSeries(tracks, (track, callback) => {       
                 var infosAndSongs = [];                
                 auth = req.user.spotify;                
@@ -177,17 +178,18 @@ app.get('/event/:slug', (req, res) => {
                     vibe = [];
                     keys.forEach(function(key) {
                         vibe.push(event.vibe[key]);
-                    });  
+                    });
                     mse = FeatureExtractor.weightedMse(info, vibe)
-                    console.log(mse)
-                    //infosAndSongs = infosAndSongs.push([track, info]);
+                    mseAndSongs.push([track, mse]);
+                    
+                    //mseAndSongs = mseAndSongs.push([track, mse]);
                     callback();
                   })
                 .catch((error) => callback(error));
                 }, (error) => {
                   if (error) return reject(error);
                   console.log('----DONE')                  
-                  //console.log(infosAndSongs)
+                  console.log(mseAndSongs)
                 });
 
               //console.log(tracks);
