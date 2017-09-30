@@ -82,8 +82,10 @@ function EventController() {
 
           event.isAuthor = (user.uid === event.author.uid);
           event.hasPassword = event.hasOwnProperty(password);
-          delete event.password;
-          delete event.salt;
+          if (event.hasPassword) {
+            delete event.password;
+            delete event.salt;
+          }
           resolve(event);
         })
       .catch((error) => reject(error));
