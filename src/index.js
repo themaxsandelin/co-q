@@ -93,6 +93,7 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
+
   VibesController.getAllVibes()
     .then((vibes) => {
 
