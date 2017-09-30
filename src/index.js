@@ -91,10 +91,6 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
-  res.send('Hello, ' + req.user.name + '!');  
-  console.log(req.user);
-  console.log(req.user.spotify.accessToken);
-  console.log(moment().format('X'));
 
   //DEBUG: Test to get song info from spotify and calculating its MSE
   // song_id = '2qvkySfQzsoOnV53YpL7SI';
@@ -120,6 +116,9 @@ app.get('/', (req, res) => {
   //     })
   //   .catch((error) => console.log('Oh Shit!'));
 
+  res.render('app', {
+    user: req.user
+  });
 });
 
 app.get('/login', (req, res) => {
