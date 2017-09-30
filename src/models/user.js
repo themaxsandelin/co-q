@@ -89,7 +89,7 @@ function User() {
     });
   }
 
-  function deleteAuthToken(uid, tokenKey) {
+  function removeAuthToken(uid, tokenKey) {
     return new Promise((resolve, reject) => {
       admin.database().ref('users/' + uid + '/authTokens/' + tokenKey).remove();
       resolve();
@@ -104,7 +104,7 @@ function User() {
     addAuthToken,
     setSpotifyAuth,
     authenticate,
-    deleteAuthToken
+    removeAuthToken
   };
 }
 

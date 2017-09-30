@@ -160,13 +160,32 @@ app.get('/event/:slug', (req, res) => {
     .then((event) => {
       res.render('event', {
         user: req.user,
-        event: event
+        event: event,
+        eventJson: JSON.stringify(event)
       });
     })
   .catch((error) => {
     console.log(error);
     res.json({ error: error });
   });
+});
+
+app.post('/join-event', (req, res) => {
+  EventController.singupUserForEvent(req.user, req.body)
+    .then(() => res.json({ success: true }))
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  })
+});
+
+app.post('/leave-event', (req, res) => {
+  EventController.removeEventAttendee(req.user, req.body)
+    .then(() => res.json({ success: true }))
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  })
 });
 
 

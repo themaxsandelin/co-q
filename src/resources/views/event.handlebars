@@ -1,22 +1,75 @@
+<script> window._sharedData.eventId = '{{{ event.id }}}'; </script>
+
 <h1>{{ event.title }}</h1>
 <p>{{ event.description }}</p>
 
-{{#if event.hasPassword}}
+{{#if event.needsPassword }}
 
   <label for="event-password">Enter the event password: *</label>
   <br>
-  <input type="password">
+  <input type="password" id="event-password">
 
   <br><br>
 
-  <button>Submit</button>
+  <button id="join-button">Join event</button>
 
 {{else}}
 
-  {{#if event.isAuthor }}
-    <p>You are the event author.</p>
+  {{#if event.isAttending }}
+    {{#if event.isAuthor }}
+      <p>You are the event author.</p>
+    {{else}}
+      <p>You are not the event author.</p>
+      <button id="leave-button">Leave event</button>
+    {{/if}}
   {{else}}
-    <p>You are not the event author.</p>
+    <button id="join-button">Join event</button>
   {{/if}}
 
 {{/if}}
+
+<script>
+
+  const eventPassword = document.getElementById('event-password');
+
+  const joinButton = document.getElementById('join-button');
+  if (joinButton) joinButton.addEventListener('click', attemptJoinEvent);
+
+  const leaveButton = document.getElementById('leave-button');
+  if (leaveButton) leaveButton.addEventListener('click', leaveEvent);
+
+  function attemptJoinEvent() {
+    let data = {
+      eventId: window._sharedData.eventId
+    };
+    if (eventPassword) data.password = eventPassword.value;
+    fetch('/join-event', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+    }).catch((error) => {
+      console.log('Fetch error: ' + error);
+    })
+  }
+
+  function leaveEvent() {
+    fetch('/leave-event', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ eventId: window._sharedData.eventId })
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+    }).catch((error) => {
+      console.log('Fetch error: ' + error);
+    });
+  }
+
+</script>
