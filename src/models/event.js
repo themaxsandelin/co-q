@@ -8,8 +8,7 @@ function Event() {
 
   function create(event, uid) {
     return new Promise((resolve, reject) => {
-      const evt = admin.database().ref('events').push(event);
-      admin.database().ref('users/' + uid + '/events').push(evt.key);
+      admin.database().ref('events').push(event);
       resolve();
     });
   }
@@ -25,33 +24,6 @@ function Event() {
   function getById(id) {
     return new Promise((resolve, reject) => {
       admin.database().ref('events/' + id).once('value', (snapshot) => resolve(snapshot.val()), (error) => reject(error));
-    });
-  }
-
-  function getAllByAuthor(uid) {
-    return new Promise((resolve, reject) => {
-      admin.database().ref('users/' + uid + '/events').once('value', (snapshot) => {
-        const eventsObj = snapshot.val();
-        if (!eventsObj) return resolve([]);
-        const eventIds = [];
-        Object.keys(eventsObj).forEach((key) => {
-          eventIds.push(eventsObj[key]);
-        });
-
-        const events = [];
-        async.eachSeries(eventIds, (id, callback) => {
-          getById(id)
-            .then((event) => {
-              events.push(event);
-              callback();
-            })
-          .catch((error) => callback(error));
-        }, (error) => {
-          if (error) return reject(error);
-
-          resolve(events);
-        });
-      });
     });
   }
 
@@ -90,7 +62,6 @@ function Event() {
     create,
     getAll,
     getById,
-    getAllByAuthor,
     getBySlug,
     signupUser,
     removeAttendee

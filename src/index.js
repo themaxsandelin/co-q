@@ -97,12 +97,13 @@ app.get('/', (req, res) => {
 
   VibesController.getAllVibes()
     .then((vibes) => {
-      EventController.getAllAuthorEvents(req.user)
-        .then((events) => {
+      EventController.getAllUserSpecificEvents(req.user)
+        .then((results) => {
 
           res.render('home', {
             user: req.user,
-            events: events,
+            attendingEvents: results.attendingEvents,
+            authorEvents: results.authorEvents,
             vibes: JSON.stringify(vibes),
             vibeNames: Object.keys(vibes)
           });

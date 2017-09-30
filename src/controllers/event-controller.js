@@ -65,14 +65,36 @@ function EventController() {
     });
   }
 
-  function getAllAuthorEvents(user) {
+  function getAllUserSpecificEvents(user) {
     return new Promise((resolve, reject) => {
-      Event.getAllByAuthor(user.uid)
-        .then((events) => {
-          events.forEach((evt, i) => {
-            events[i].url = process.siteUrl + '/event/' + events[i].slug;
+      Event.getAll()
+        .then((eventObjects) => {
+          const events = [];
+          Object.keys(eventObjects).forEach((id) => {
+            const event = eventObjects[id];
+            event.id = id;
+            events.push(event);
           });
-          resolve(events);
+
+          const attendingEvents = [];
+          const authorEvents = [];
+
+          events.forEach((evt, i) => {
+            evt.url = process.siteUrl + '/event/' + evt.slug;
+            if (evt.author.uid === user.uid) {
+              authorEvents.push(evt);
+            } else {
+              if (evt.attendees) {
+                Object.keys(evt.attendees).forEach((key) => {
+                  if (evt.attendees[key] === user.uid) {
+                    attendingEvents.push(evt);
+                  }
+                });
+              }
+            }
+          });
+
+          resolve({ attendingEvents: attendingEvents, authorEvents: authorEvents });
         })
       .catch((error) => reject(error));
     });
@@ -149,7 +171,7 @@ function EventController() {
   return {
     createEvent,
     getAllEventSlugs,
-    getAllAuthorEvents,
+    getAllUserSpecificEvents,
     getEventBySlug,
     singupUserForEvent,
     removeEventAttendee

@@ -43,7 +43,8 @@
 
 <button id="create-event">Create</button>
 
-{{#each events as |event i|}}
+<h3>Your events</h3>
+{{#each authorEvents as |event i|}}
   <div class="event">
     <h5>{{ event.title }}</h5>
     <p>{{ event.description }}</p>
@@ -51,6 +52,14 @@
   </div>
 {{/each}}
 
+<h3>Events you are attending</h3>
+{{#each attendingEvents as |event i|}}
+  <div class="event">
+    <h5>{{ event.title }}</h5>
+    <p>{{ event.description }}</p>
+    <a href="{{ event.url }}">{{ event.url }}</a>
+  </div>
+{{/each}}
 
 <script>
 
