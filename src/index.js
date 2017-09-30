@@ -23,6 +23,8 @@ const Formatter = require('./components/formatter.js')();
 */
 const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
+const VibesController = require('./controllers/vibes-controller.js')();
+const EventController = require('./controllers/event-controller.js')();
 
 
 /**
@@ -91,10 +93,61 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
-  res.render('app', {
-    user: req.user
+
+  VibesController.getAllVibes()
+    .then((vibes) => {
+
+
+      res.render('app', {
+        user: req.user,
+        vibes: JSON.stringify(vibes),
+        vibeNames: Object.keys(vibes)
+      });
+
+
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
   });
 });
+
+//DEBUG: Test to get song info from spotify and calculating its MSE
+// song_id = '2qvkySfQzsoOnV53YpL7SI';
+// auth_token = req.user.spotify.accessToken;
+// SpotifyController.getSongInfoById(auth_token, song_id)
+//     .then((songInfo) => {
+//       keys = [
+//         'danceability',
+//         'energy',
+//         'key',
+//         'loudness',
+//         'mode',
+//         'speechiness',
+//         'acousticness',
+//         'instrumentalness',
+//         'liveness',
+//         'valence',
+//         'tempo'];
+//       infoArray = Formatter.filterObjectToArray(songInfo, keys);
+//       x_target = [0.49, 0.88, 4.33, -5.23, 1.00, 0.05, 0.03, 0.37, 0.17, 0.31, 137.76];
+//       mse = FeatureExtractor.weightedMse(infoArray, x_target);
+//       console.log(mse);
+//     })
+//   .catch((error) => console.log('Oh Shit!'));
+
+
+app.post('/create-event', (req, res) => {
+  EventController.createEvent(req.body, req.user)
+    .then((event) => {
+      res.json(event);
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  });
+});
+
 
 app.get('/login', (req, res) => {
   res.render('login');
@@ -133,7 +186,6 @@ app.get('/callback', (req, res) => {
         console.log(data.error);
         return res.json({ error: data.error });
       }
-      // data keys => { auth, account }
 
       UserController.ensureUserExists(data.account)
         .then((user) => {
