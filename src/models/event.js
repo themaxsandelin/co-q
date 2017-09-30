@@ -10,8 +10,17 @@ function Event() {
     });
   }
 
+  function getAll() {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('events').once('value', (snapshot) => {
+        resolve(snapshot.val());
+      }, (error) => reject(error));
+    });
+  }
+
   return {
-    create
+    create,
+    getAll
   };
 }
 

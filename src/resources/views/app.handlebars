@@ -12,7 +12,7 @@
 <br><br>
 
 <label for="event-slug">Url: *</label>
-<p style="font-size: 12px; color: #aaa; margin: 0;">http://localhost:8888/</p>
+<p style="font-size: 12px; color: #aaa; margin: 0;" id="slug-preview"></p>
 <br>
 <input type="text" id="event-slug">
 
@@ -55,17 +55,44 @@
   eventTitle.addEventListener('input', titleInput);
 
   const eventSlug = document.getElementById('event-slug');
+  eventSlug.addEventListener('input', slugInput);
 
-  function titleInput() {
-    let title = this.value;
+  const slugPreview = document.getElementById('slug-preview');
+  updateSlugPreview();
+
+  function generateSlugFromTitle(title) {
     title = title.replace(' ', '-');
     title = title.replace(/[^0-9a-z-]/gi, '');
     title = title.toLowerCase();
-    eventSlug.value = title;
+    return title;
+  }
+
+  function updateSlugPreview() {
+    slugPreview.innerText = window.location.protocol + '//' + window.location.host + '/event/' + eventSlug.value;
+  }
+
+  let slugAutomated = true;
+  function titleInput() {
+    if (!slugAutomated) return;
+
+    eventSlug.value = generateSlugFromTitle(this.value);
+    updateSlugPreview();
+  }
+
+  function slugInput() {
+    let slug = this.value;
+    if (slug) {
+      slugAutomated = false;
+    } else {
+      this.value = generateSlugFromTitle(eventTitle.value);
+      slugAutomated = true;
+    }
+    updateSlugPreview();
   }
 
   function initiateCreateEvent() {
-    const title = document.getElementById('event-title').value;
+    const title = eventTitle.value;
+    const slug = eventSlug.value;
     const description = document.getElementById('event-description').value;
     const vibe  = vibes[document.getElementById('event-vibe').value];
     const password = document.getElementById('event-password').value;
@@ -78,6 +105,7 @@
       credentials: 'include',
       body: JSON.stringify({
         title: title,
+        slug: slug,
         description: description,
         vibe: vibe,
         password: password

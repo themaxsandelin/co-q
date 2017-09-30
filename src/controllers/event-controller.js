@@ -18,28 +18,52 @@ function EventController() {
     return new Promise((resolve, reject) => {
       Validator.validateEventBody(body)
         .then(() => {
-          const event = body;
-          event.author = {
-            uid: user.uid,
-            name: user.name
-          };
-          if (body.password) {
-            body.salt = Generator.generateUniqueString(512);
-            body.password = hashPassword(body.password, body.salt);
-          } else {
-            delete event.password;
-          }
+          getAllEventSlugs()
+            .then((slugs) => {
+              if (slugs.indexOf(body.slug) > -1) return reject('The slug you provided has already been taken.');
 
-          Event.create(event)
-            .then(() => resolve(event))
+              const event = body;
+              event.author = {
+                uid: user.uid,
+                name: user.name
+              };
+              if (body.password) {
+                body.salt = Generator.generateUniqueString(512);
+                body.password = hashPassword(body.password, body.salt);
+              } else {
+                delete event.password;
+              }
+
+              Event.create(event)
+                .then(() => resolve(event))
+              .catch((error) => reject(error));
+            })
           .catch((error) => reject(error));
         })
       .catch((error) => reject(error));
     });
   }
 
+  function getAllEventSlugs() {
+    return new Promise((resolve, reject) => {
+      Event.getAll()
+        .then((events) => {
+          const slugs = [];
+          if (!events) return resolve(slugs);
+          const ids = Object.keys(events);
+
+          ids.forEach((id) => {
+            slugs.push(events[id].slug);
+          });
+          resolve(slugs);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
   return {
-    createEvent
+    createEvent,
+    getAllEventSlugs
   };
 }
 
