@@ -95,11 +95,15 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   VibesController.getAllVibes()
     .then((vibes) => {
+
+
       res.render('app', {
         user: req.user,
         vibes: JSON.stringify(vibes),
         vibeNames: Object.keys(vibes)
       });
+
+
     })
   .catch((error) => {
     console.log(error);

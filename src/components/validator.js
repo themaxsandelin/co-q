@@ -33,9 +33,15 @@ function Validator() {
     return valid;
   }
 
+  function validateSlug(slug) {
+    const reg = /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
+    return reg.test(slug);
+  }
+
   function validateEventBody(body) {
     return new Promise((resolve, reject) => {
-      if (!validateTitle) return reject('Please provide a title that only contains letter and numbers.');
+      if (!validateTitle(body.title)) return reject('Please provide a title that only contains letter and numbers.');
+      if (!validateSlug(body.slug)) return reject('Please provide a slug that only contains letters and dashes.');
       if (!body.description) return reject('Please provide a description.');
       if (!validateVibe(body.vibe)) return reject('Please provide a valid vibe.');
       resolve();
