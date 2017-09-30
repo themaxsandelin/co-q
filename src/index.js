@@ -55,6 +55,7 @@ app.use((req, res, next) => {
 
   UserController.authenticateUser(req.cookies)
     .then((results) => {
+
       if (!results.validToken) {
         // Destroy cookies. Redirect to login.
         const expires = moment().subtract(1, 'M').format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
@@ -91,6 +92,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.send('Hello, ' + req.user.name + '!');
   console.log(req.user);
+  console.log(moment().format('X'));
 });
 
 app.get('/login', (req, res) => {
@@ -123,7 +125,7 @@ app.get('/callback', (req, res) => {
     return res.json({ error: req.query.error });
   }
 
-  SpotifyController.getAuthToken(req.query.code)
+  SpotifyController.getAccessToken(req.query.code)
     .then((auth) => SpotifyController.getAccountInfo(auth))
     .then((data) => {
       if (data.error) {

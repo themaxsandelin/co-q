@@ -8,6 +8,9 @@ const Formatter = require('../components/formatter.js')();
 // Models
 const User = require('../models/user.js')();
 
+// Controllers
+const SpotifyController = require('./spotify-controller.js')();
+
 function UserController() {
 
   // Will make sure that the user exists, by first checking if it does and if so return the uid. Or creating a new user.
@@ -29,15 +32,18 @@ function UserController() {
     return new Promise((resolve, reject) => {
       const token = Generator.generateUniqueString(128);
       User.addAuthToken(user.uid, token)
-        .then(() => {
-          spotifyAuth.expires = parseInt(moment().add(spotifyAuth.expires_in, 'seconds').format('X'));
-          spotifyAuth = Formatter.formatObjectKeys(spotifyAuth);
-          delete spotifyAuth.expiresIn;
+        .then(() => updateSpotifyAuth(user, spotifyAuth))
+        .then(() => resolve(token))
+      .catch((error) => reject(error));
+    });
+  }
 
-          User.setSpotifyAuth(user.uid, spotifyAuth)
-            .then(() => resolve(token))
-          .catch((error) => reject(error));
-        })
+  function updateSpotifyAuth(user, spotifyAuth) {
+    return new Promise((resolve, reject) => {
+      spotifyAuth = Formatter.formatSpotifyAuth(spotifyAuth);
+
+      User.setSpotifyAuth(user.uid, spotifyAuth)
+        .then(() => resolve(spotifyAuth))
       .catch((error) => reject(error));
     });
   }
@@ -49,7 +55,20 @@ function UserController() {
       if (!uid || !token) return resolve({ validToken: false });
 
       User.authenticate(uid, token)
-        .then((results) => resolve(results))
+        .then((results) => {
+          if (!results.validToken) return resolve(results);
+
+          const now = parseInt(moment().format('X'));
+          if (now < results.user.spotify.expires) return resolve(results);
+
+          SpotifyController.refreshAccessToken(results.user.spotify.refreshToken)
+            .then((spotifyAuth) => updateSpotifyAuth(results.user, spotifyAuth))
+            .then((spotifyAuth) => {
+              results.user.spotify = spotifyAuth;
+              resolve(results);
+            })
+          .catch((error) => reject(error));
+        })
       .catch((error) => reject(error));
     });
   }
@@ -65,6 +84,7 @@ function UserController() {
   return {
     ensureUserExists,
     createNewUserLogin,
+    updateSpotifyAuth,
     authenticateUser,
     logoutUser
   };

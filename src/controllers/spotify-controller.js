@@ -5,7 +5,7 @@ const request = require('request');
 
 function SpotifyController() {
 
-  function getAuthToken(code) {
+  function getAccessToken(code) {
     return new Promise((resolve, reject) => {
       request.post({
         url: 'https://accounts.spotify.com/api/token',
@@ -51,9 +51,32 @@ function SpotifyController() {
     });
   }
 
+  function refreshAccessToken(refreshToken) {
+    return new Promise((resolve, reject) => {
+      request.post('https://accounts.spotify.com/api/token', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + new Buffer(process.env.SPOTIFY_ID + ':' + process.env.SPOTIFY_SECRET).toString('base64')
+        },
+        form: {
+          'grant_type': 'refresh_token',
+          'refresh_token': refreshToken
+        }
+      }, (error, response, body) => {
+        if (error) return reject(error);
+        const data = JSON.parse(body);
+        if (data.error) return reject(body.error);
+
+        data.refresh_token = refreshToken;
+        resolve(data);
+      });
+    });
+  }
+
   return {
-    getAuthToken,
-    getAccountInfo
+    getAccessToken,
+    getAccountInfo,
+    refreshAccessToken
   };
 }
 

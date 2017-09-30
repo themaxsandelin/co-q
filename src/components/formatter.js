@@ -1,3 +1,6 @@
+// Modules
+const moment = require('moment');
+
 function Formatter() {
 
   function formatObjectKeys(source) {
@@ -20,7 +23,7 @@ function Formatter() {
     return obj;
   }
 
-  function formatObjectKeysMuli(list) {
+  function formatObjectKeysMulti(list) {
     const results = [];
     list.forEach((obj) => {
       results.push(formatObjectKeys(obj));
@@ -43,11 +46,19 @@ function Formatter() {
     return results;
   }
 
+  function formatSpotifyAuth(spotifyAuth) {
+    spotifyAuth.expires = parseInt(moment().add(spotifyAuth.expires_in, 'seconds').format('X'));
+    spotifyAuth = formatObjectKeys(spotifyAuth);
+    delete spotifyAuth.expiresIn;
+    return spotifyAuth;
+  }
+
   return {
     formatObjectKeys,
-    formatObjectKeysMuli,
+    formatObjectKeysMulti,
     filterObject,
-    filterObjects
+    filterObjects,
+    formatSpotifyAuth
   };
 }
 
