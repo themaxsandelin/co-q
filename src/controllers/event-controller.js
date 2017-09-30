@@ -34,7 +34,7 @@ function EventController() {
                 delete event.password;
               }
 
-              Event.create(event)
+              Event.create(event, user.uid)
                 .then(() => resolve(event))
               .catch((error) => reject(error));
             })
@@ -61,9 +61,18 @@ function EventController() {
     });
   }
 
+  function getAllAuthorEvents(user) {
+    return new Promise((resolve, reject) => {
+      Event.getAllByAuthor(user.uid)
+        .then((events) => resolve(events))
+      .catch((error) => reject(error));
+    });
+  }
+
   return {
     createEvent,
-    getAllEventSlugs
+    getAllEventSlugs,
+    getAllAuthorEvents
   };
 }
 

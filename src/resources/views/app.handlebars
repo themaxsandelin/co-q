@@ -43,6 +43,14 @@
 
 <button id="create-event">Create</button>
 
+{{#each events as |event i|}}
+  <div class="event">
+    <h5>{{ event.title }}</h5>
+    <p>{{ event.description }}</p>
+    <a href="http://localhost:8888/event/{{ event.slug }}">http://localhost:8888/event/{{ event.slug }}</a>
+  </div>
+{{/each}}
+
 
 <script>
 
