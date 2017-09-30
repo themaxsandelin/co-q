@@ -1,3 +1,6 @@
+// Components
+const Generator = require('../components/generator.js')();
+
 // Models
 const User = require('../models/user.js')();
 
@@ -11,7 +14,7 @@ function UserController() {
       .catch((error) => {
         if (error.code !== 'auth/user-not-found') return reject(error);
 
-        User.create(spotifyAccount.email, spotifyAccount.display_name)
+        User.create(spotifyAccount)
           .then((user) => resolve(user))
         .catch((error) => reject(error));
       });
@@ -20,14 +23,38 @@ function UserController() {
 
   function createNewUserLogin(user) {
     return new Promise((resolve, reject) => {
-      User.createAuthToken(user.uid)
-        .then((token) => resolve(token))
+      const token = Generator.generateUniqueString(128);
+      User.addAuthToken(user.uid, token)
+        .then(() => resolve(token))
+      .catch((error) => reject(error));
+    });
+  }
+
+  function authenticateUser(cookies) {
+    return new Promise((resolve, reject) => {
+      const uid = cookies.cquid;
+      const token = cookies.cqt;
+      if (!uid || !token) return resolve({ validToken: false });
+
+      User.authenticate(uid, token)
+        .then((results) => resolve(results))
+      .catch((error) => reject(error));
+    });
+  }
+
+  function logoutUser(user) {
+    return new Promise((resolve, reject) => {
+      User.deleteAuthToken(user.uid, user.authToken.key)
+        .then(() => resolve())
       .catch((error) => reject(error));
     });
   }
 
   return {
-    ensureUserExists
+    ensureUserExists,
+    createNewUserLogin,
+    authenticateUser,
+    logoutUser
   };
 }
 

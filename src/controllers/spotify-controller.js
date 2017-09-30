@@ -7,7 +7,6 @@ function SpotifyController() {
 
   function getAuthToken(code) {
     return new Promise((resolve, reject) => {
-      console.log(code);
       request.post({
         url: 'https://accounts.spotify.com/api/token',
         headers: {
@@ -17,7 +16,7 @@ function SpotifyController() {
         form: {
           'grant_type': 'authorization_code',
           'code': code,
-          'redirect_uri': process.siteUrl + process.env.REDIRECT_PATH
+          'redirect_uri': process.siteUrl + '/callback'
         }
       }, (error, response, body) => {
         if (error) return reject(error);
