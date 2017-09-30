@@ -86,8 +86,8 @@ function SpotifyController() {
     });
   }
 
-  function getSongInfoById(auth, song_id) {    
-    return new Promise((resolve, reject) => {
+  function getSongInfoById(auth, song_id) {      
+    return new Promise((resolve, reject) => {      
       request('https://api.spotify.com/v1/audio-features/' + song_id, {
         headers: {
           'Authorization': 'Bearer ' + auth.accessToken,
@@ -96,9 +96,8 @@ function SpotifyController() {
         }
       }, (error, response, body) => {      
         if (error) return reject(error);
-
+        //console.log(body)
         const data = JSON.parse(body);
-
         if (data.error) return reject(data.error);
         
         resolve(data);
@@ -109,7 +108,7 @@ function SpotifyController() {
 
   function getUserTopGenres(auth) {  
     return new Promise((resolve, reject) => {
-      request('https://api.spotify.com/v1/me/top/artists?limit=50', {
+      request('https://api.spotify.com/v1/me/top/artists?limit=1', {
         headers: {          
           'Authorization': 'Bearer ' + auth.accessToken,
           'Accept': 'application/json'
@@ -137,8 +136,8 @@ function SpotifyController() {
   }
 
     function getUserTopTrackIds(auth) {  
-    return new Promise((resolve, reject) => {
-      request('https://api.spotify.com/v1/me/top/tracks?limit=50', {
+    return new Promise((resolve, reject) => {      
+      request('https://api.spotify.com/v1/me/top/tracks?limit=1', {
         headers: {          
           'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'

@@ -16,13 +16,14 @@ function SongSelector() {
   
 
   function getSongsForAllUsers(userAuths) { 
-    //console.log(userAuths) 
     return new Promise((resolve, reject) => {
       allTracks = [];
       async.eachSeries(userAuths, (auth, callback) => {        
         SpotifyController.getUserTopTrackIds(auth)
           .then((tracks) => {
+            //console.log(tracks)
             allTracks = allTracks.concat(tracks);
+            //console.log(allTracks)
             callback();
           })
         .catch((error) => callback(error));
@@ -35,13 +36,16 @@ function SongSelector() {
   }
 
   function getMostRelevantTracks(tracks, targetVibe) {
+    //console.log(tracks)
     mseTrackPairs = [];
     for (i = 0; i < tracks.length; i++) {
-      track = tracks[i]
+      //console.log(i);
+      track = tracks[i];
+      //console.log(i);
       mse = FeatureExtractor.weightedMse(track, targetVibe);
       mseTrackPairs.add([mse, track])
     }
-    console.log(mseTrackPairs)
+    //console.log(mseTrackPairs)
     return mseTrackPairs
   }
 

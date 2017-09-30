@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const moment = require('moment');
+const async = require('async');
 
 
 /**
@@ -159,11 +160,37 @@ app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
     UserController.getAccessTokens()
-      .then((tokens) => {
+      .then((tokens) => {        
         SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {
-              //SongSelector.getMostRelevantTracks(tracks, event.vibe);
-              console.log(tracks);
+            .then((tracks) => {                           
+              async.eachSeries(tracks, (track, callback) => {       
+                var infosAndSongs = [];                
+                auth = req.user.spotify;                
+                SpotifyController.getSongInfoById(auth, track)
+                  .then((data) => {
+                    //console.log(data)
+                    keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
+                    info = Formatter.filterObjectToArray(data, ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']);
+                    //vibe = Formatter.filterObjectToArray(event.vibe, ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']);
+                    //console.log(info)
+                    //console.log(vibe)
+                    vibe = [];
+                    keys.forEach(function(key) {
+                        vibe.push(event.vibe[key]);
+                    });  
+                    mse = FeatureExtractor.weightedMse(info, vibe)
+                    console.log(mse)
+                    //infosAndSongs = infosAndSongs.push([track, info]);
+                    callback();
+                  })
+                .catch((error) => callback(error));
+                }, (error) => {
+                  if (error) return reject(error);
+                  console.log('----DONE')                  
+                  //console.log(infosAndSongs)
+                });
+
+              //console.log(tracks);
             })
           .catch((error) => reject(error));
       })
