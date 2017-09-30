@@ -39,6 +39,11 @@ function compareMse(a,b) {
   return 0;
 }
 
+/**
+* Constants
+*/
+const MAX_SEED = 5;
+
 
 /**
 * Express setup
@@ -171,14 +176,22 @@ app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
     UserController.getAccessTokens()
-      .then((tokens) => {        
+      .then((tokens_) => {
+        tokens = ['BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw','BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw']; //DEBUG      
         SongSelector.getSongsForAllUsers(tokens)
             .then((tracks) => {              
               auth = req.user.spotify;
               keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
+              var numBatches = tokens.length;
+              for (var j=0; j<numBatches; j++) {
+                start = tracks.length*j;
+                end = start + tracks.length;
+                sliceOfTracks = tracks.slice(start,end);
+                console.log()
+              }
+
               SpotifyController.getMultipleSongInfosByIds(auth, tracks)
                   .then((data) => {
-                    // console.log(data.audio_features[0])
                     var trackFeatures = [];                    
                     data.audio_features.forEach((part) => {                      
                       feature = Formatter.filterObjectToArray(part, keys);                      
@@ -189,6 +202,8 @@ app.get('/event/:slug', (req, res) => {
                     keys.forEach(function(key) {
                       vibe.push(event.vibe[key]);
                     });
+
+                    //Calculate MSE for each song and add tuples of songId and MSE in a list
                     var mseAndSongs = [];
                     for (var i=0; i<tracks.length; i++) {
                       track = tracks[i];
@@ -196,42 +211,27 @@ app.get('/event/:slug', (req, res) => {
                       var mse = FeatureExtractor.weightedMse(trackFeature, vibe);
                       mseAndSongs.push([track, mse]);
                     }
+
+                    //Sort in ascending order based on MSE
                     mseAndSongs.sort(compareMse); 
-                    // trackFeatures.forEach((feature) => {
-                    //   mse = FeatureExtractor.weightedMse(info, vibe);
-                    //   mseAndSongs.push([track, mse]);
-                    // });
-                    // mse = FeatureExtractor.weightedMse(info, vibe)
-                    // mseAndSongs.push([track, mse]);
-                    console.log(mseAndSongs)
+
+                    //Extract the best songs to use for seed
+                    bestSongs = []
+                    for (var i=0; i<MAX_SEED; i++) {
+                      bestSongs.push(mseAndSongs[i][0]);
+                    }
+
+
+                    SpotifyController.getSongsFromSeeds(auth,bestSongs)
+                        .then((data) => {
+                          var idsOfRecommendation = Formatter.trackIdsFromRecommendation(data);
+                          console.log(idsOfRecommendation);
+                        })
+                      .catch((error) => reject(error));
+
                   })
                 .catch((error) => reject(error));
-              // var mseAndSongs = [];                          
-              // async.eachSeries(tracks, (track, callback) => {       
-              //   var infosAndSongs = [];                
-              //   auth = req.user.spotify;                
-              //   SpotifyController.getSongInfoById(auth, track)
-              //     .then((data) => {
-              //       keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
-              //       info = Formatter.filterObjectToArray(data, keys);
-              //       vibe = [];
-              //       keys.forEach(function(key) {
-              //           vibe.push(event.vibe[key]);
-              //       });
-              //       mse = FeatureExtractor.weightedMse(info, vibe)
-              //       mseAndSongs.push([track, mse]);
-                    
-              //       //mseAndSongs = mseAndSongs.push([track, mse]);
-              //       callback();
-              //     })
-              //   .catch((error) => callback(error));
-              //   }, (error) => {
-              //     if (error) return reject(error);
-              //     console.log('----DONE')
-              //     //Sort the songs in ascending order after the mse
-              //     mseAndSongs.sort(compareMse); 
-              //     console.log(mseAndSongs);                 
-              //   });
+
             })
           .catch((error) => reject(error));
       })

@@ -61,13 +61,22 @@ function Formatter() {
     return spotifyAuth;
   }
 
+  function trackIdsFromRecommendation(recommendation) {
+    ids = [];
+    recommendation.tracks.forEach((track) => {
+      ids.push(track.id);
+    });
+    return ids;
+  }
+
   return {
     formatObjectKeys,
     formatObjectKeysMulti,
     filterObject,
     filterObjectToArray,
     filterObjects,
-    formatSpotifyAuth
+    formatSpotifyAuth,
+    trackIdsFromRecommendation
   };
 }
 

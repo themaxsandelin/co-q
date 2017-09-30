@@ -167,7 +167,6 @@ function SpotifyController() {
         }
       }, (error, response, body) => { 
         if (error) return reject(error);
-
         const data = JSON.parse(body);
 
         if (data.error) return reject(data.error);
@@ -184,6 +183,33 @@ function SpotifyController() {
     });
   }
 
+  function getSongsFromSeeds(auth, seedSongs) {     
+    return new Promise((resolve, reject) => {  
+      baseUrl = 'https://api.spotify.com/v1/recommendations?';
+      market = 'market=SE';
+      seed = '&seed_tracks='+seedSongs.join();
+      limit = '&limit=20'
+      req_url = baseUrl + market + seed + limit      
+      request(req_url, {
+        headers: {          
+          'Authorization': 'Bearer ' + auth.accessToken,
+          'Accept': 'application/json'
+        }
+      }, (error, response, body) => { 
+
+        if (error) return reject(error);
+        const data = JSON.parse(body);
+        
+        if (data.error) return reject(data.error);
+
+        resolve(data);        
+
+      });
+    });
+  }
+
+
+
   return {
     getAccessToken,
     getAccountInfo,
@@ -191,7 +217,8 @@ function SpotifyController() {
     getSongInfoById,
     getUserTopGenres,
     getUserTopTrackIds,
-    getMultipleSongInfosByIds
+    getMultipleSongInfosByIds,
+    getSongsFromSeeds
   };
 }
 
