@@ -17,6 +17,7 @@ const moment = require('moment');
 const Generator = require('./components/generator.js')();
 const FeatureExtractor = require('./components/feature-extractor.js')();
 const Formatter = require('./components/formatter.js')();
+const SongSelector = require('./components/song-selector.js')();
 
 /**
 * Controllers
@@ -142,7 +143,6 @@ app.get('/', (req, res) => {
 //       console.log(mse);
 //     })
 //   .catch((error) => console.log('Oh Shit!'));
-
 
 app.post('/create-event', (req, res) => {
   EventController.createEvent(req.body, req.user)
