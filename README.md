@@ -5,7 +5,7 @@ The ultimate music app for your event.
 - git cli
 - Node.js >v8.0
 
-## Setup
+### Setup
 1. If you haven't already, install [Node.js](https://nodejs.org/dist/v8.6.0/node-v8.6.0.pkg).
 
 2. Clone the repository and change directory into it.
@@ -36,13 +36,16 @@ The ultimate music app for your event.
 
 7. Hack away! 🎉
 
-## Contribution
+### Hacking
 Co-Q uses Gulp to build all assets like `.js` and `.css` files, all of which are located in the `/src/resources/assets` folder.
 ```bash
 $ gulp
 ```
 This will run all tasks and start the watch task to listen on changes on all .js and .scss files.
 
+
+## Contributors
+| [<img src="https://avatars.githubusercontent.com/u/10816138" width="100px;"/><br /><sub>Johan Björk</sub>](https://github.com/jobjork) | [<img src="https://avatars.githubusercontent.com/u/11041241" width="100px;"/><br /><sub>Karl Svensson</sub>](https://github.com/knallle) |
 
 ## License
 [MIT](LICENSE) © [Max Sandelin](https://github.com/themaxsandelin)
