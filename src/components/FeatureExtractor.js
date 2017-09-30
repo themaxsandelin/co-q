@@ -16,22 +16,6 @@ function FeatureExtractor() {
     return mse;
   }
 
-  function jsonToInfoVector(json) {
-    info = [
-      json.danceability,
-      json.energy,
-      json.key,
-      json.loudness,
-      json.mode,
-      json.speechiness,
-      json.acousticness,
-      json.instrumentalness,
-      json.liveness,
-      json.valence,
-      json.tempo];
-    return info;
-  }
-
   return {
     weightedMse,
     jsonToInfoVector
