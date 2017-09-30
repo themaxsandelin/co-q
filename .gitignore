@@ -3,6 +3,7 @@
 # -------------------- #
 
 serviceAccountKey.json
+/public
 
 # -------------------- #
 # Node.js

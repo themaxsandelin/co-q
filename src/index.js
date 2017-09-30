@@ -42,6 +42,7 @@ app.engine('handlebars', exphbs({
 app.use(bodyParser.json({ extended: true }));
 app.use(cookieParser());
 app.use(helmet());
+app.use(express.static(__dirname.replace('/src', '') + '/public'));
 
 app.use((req, res, next) => {
   const openUrls = [ '/login', '/callback', '/logIntoSpotify' ];

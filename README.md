@@ -1,4 +1,4 @@
-# CO-Q
+# Co-Q
 The ultimate music app for your event.
 
 ## Prerequisites
@@ -35,6 +35,13 @@ The ultimate music app for your event.
     ```
 
 7. Hack away! 🎉
+
+## Contribution
+Co-Q uses Gulp to build all assets like `.js` and `.css` files, all of which are located in the `/src/resources/assets` folder.
+```bash
+$ gulp
+```
+This will run all tasks and start the watch task to listen on changes on all .js and .scss files.
 
 
 ## License
