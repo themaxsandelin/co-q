@@ -1,0 +1,22 @@
+<h1>{{ event.title }}</h1>
+<p>{{ event.description }}</p>
+
+{{#if event.hasPassword}}
+
+  <label for="event-password">Enter the event password: *</label>
+  <br>
+  <input type="password">
+
+  <br><br>
+
+  <button>Submit</button>
+
+{{else}}
+
+  {{#if event.isAuthor }}
+    <p>You are the event author.</p>
+  {{else}}
+    <p>You are not the event author.</p>
+  {{/if}}
+
+{{/if}}

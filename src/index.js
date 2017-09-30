@@ -99,7 +99,7 @@ app.get('/', (req, res) => {
       EventController.getAllAuthorEvents(req.user)
         .then((events) => {
 
-          res.render('app', {
+          res.render('home', {
             user: req.user,
             events: events,
             vibes: JSON.stringify(vibes),
@@ -155,10 +155,13 @@ app.post('/create-event', (req, res) => {
   });
 });
 
-app.get('/events/:slug', (req, res) => {
-  EventController.getEventBySlug(req.query.slug, req.user)
+app.get('/event/:slug', (req, res) => {
+  EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
-
+      res.render('event', {
+        user: req.user,
+        event: event
+      });
     })
   .catch((error) => {
     console.log(error);

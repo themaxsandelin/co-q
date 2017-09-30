@@ -76,14 +76,25 @@ function EventController() {
 
   function getEventBySlug(slug, user) {
     return new Promise((resolve, reject) => {
-      console.log(slug);
+      Event.getBySlug(slug)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          event.isAuthor = (user.uid === event.author.uid);
+          event.hasPassword = event.hasOwnProperty(password);
+          delete event.password;
+          delete event.salt;
+          resolve(event);
+        })
+      .catch((error) => reject(error));
     });
   }
 
   return {
     createEvent,
     getAllEventSlugs,
-    getAllAuthorEvents
+    getAllAuthorEvents,
+    getEventBySlug
   };
 }
 
