@@ -97,15 +97,21 @@ app.get('/', (req, res) => {
 
   VibesController.getAllVibes()
     .then((vibes) => {
+      EventController.getAllAuthorEvents(req.user)
+        .then((events) => {
 
+          res.render('app', {
+            user: req.user,
+            events: events,
+            vibes: JSON.stringify(vibes),
+            vibeNames: Object.keys(vibes)
+          });
 
-      res.render('app', {
-        user: req.user,
-        vibes: JSON.stringify(vibes),
-        vibeNames: Object.keys(vibes)
+        })
+      .catch((error) => {
+        console.log(error);
+        res.json({ error: error });
       });
-
-
     })
   .catch((error) => {
     console.log(error);

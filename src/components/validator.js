@@ -40,10 +40,10 @@ function Validator() {
 
   function validateEventBody(body) {
     return new Promise((resolve, reject) => {
-      if (!validateTitle(body.title)) return reject('Please provide a title that only contains letter and numbers.');
-      if (!validateSlug(body.slug)) return reject('Please provide a slug that only contains letters and dashes.');
+      if (!body.title || !validateTitle(body.title)) return reject('Please provide a title that only contains letter and numbers.');
+      if (!body.slug || !validateSlug(body.slug)) return reject('Please provide a slug that only contains letters and dashes.');
       if (!body.description) return reject('Please provide a description.');
-      if (!validateVibe(body.vibe)) return reject('Please provide a valid vibe.');
+      if (!body.vibe || !validateVibe(body.vibe)) return reject('Please provide a valid vibe.');
       resolve();
     });
   }
