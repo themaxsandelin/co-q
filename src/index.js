@@ -15,7 +15,8 @@ const moment = require('moment');
 * Components
 */
 const Generator = require('./components/generator.js')();
-
+const FeatureExtractor = require('./components/feature-extractor.js')();
+const Formatter = require('./components/formatter.js')();
 
 /**
 * Controllers
@@ -90,9 +91,35 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
-  res.send('Hello, ' + req.user.name + '!');
+  res.send('Hello, ' + req.user.name + '!');  
   console.log(req.user);
+  console.log(req.user.spotify.accessToken);
   console.log(moment().format('X'));
+
+  //DEBUG: Test to get song info from spotify and calculating its MSE
+  // song_id = '2qvkySfQzsoOnV53YpL7SI';
+  // auth_token = req.user.spotify.accessToken;
+  // SpotifyController.getSongInfoById(auth_token, song_id)
+  //     .then((songInfo) => {
+  //       keys = [
+  //         'danceability',
+  //         'energy',
+  //         'key',
+  //         'loudness',
+  //         'mode',
+  //         'speechiness',
+  //         'acousticness',
+  //         'instrumentalness',
+  //         'liveness',
+  //         'valence',
+  //         'tempo'];
+  //       infoArray = Formatter.filterObjectToArray(songInfo, keys);
+  //       x_target = [0.49, 0.88, 4.33, -5.23, 1.00, 0.05, 0.03, 0.37, 0.17, 0.31, 137.76];
+  //       mse = FeatureExtractor.weightedMse(infoArray, x_target);
+  //       console.log(mse);
+  //     })
+  //   .catch((error) => console.log('Oh Shit!'));
+
 });
 
 app.get('/login', (req, res) => {

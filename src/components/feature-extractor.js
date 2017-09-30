@@ -21,4 +21,4 @@ function FeatureExtractor() {
   };
 }
 
-module.exports = Generator;
+module.exports = FeatureExtractor;
