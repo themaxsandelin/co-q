@@ -32,6 +32,7 @@ function Event() {
     return new Promise((resolve, reject) => {
       admin.database().ref('users/' + uid + '/events').once('value', (snapshot) => {
         const eventsObj = snapshot.val();
+        if (!eventsObj) return resolve([]);
         const eventIds = [];
         Object.keys(eventsObj).forEach((key) => {
           eventIds.push(eventsObj[key]);

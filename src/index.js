@@ -116,6 +116,7 @@ app.get('/', (req, res) => {
     console.log(error);
     res.json({ error: error });
   });
+
 });
 
 //DEBUG: Test to get song info from spotify and calculating its MSE
@@ -147,6 +148,17 @@ app.post('/create-event', (req, res) => {
   EventController.createEvent(req.body, req.user)
     .then((event) => {
       res.json(event);
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  });
+});
+
+app.get('/events/:slug', (req, res) => {
+  EventController.getEventBySlug(req.query.slug, req.user)
+    .then((event) => {
+
     })
   .catch((error) => {
     console.log(error);

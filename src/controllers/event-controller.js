@@ -64,8 +64,19 @@ function EventController() {
   function getAllAuthorEvents(user) {
     return new Promise((resolve, reject) => {
       Event.getAllByAuthor(user.uid)
-        .then((events) => resolve(events))
+        .then((events) => {
+          events.forEach((evt, i) => {
+            events[i].url = process.siteUrl + '/event/' + events[i].slug;
+          });
+          resolve(events);
+        })
       .catch((error) => reject(error));
+    });
+  }
+
+  function getEventBySlug(slug, user) {
+    return new Promise((resolve, reject) => {
+      console.log(slug);
     });
   }
 
