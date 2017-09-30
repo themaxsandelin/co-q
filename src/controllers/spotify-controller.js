@@ -140,11 +140,10 @@ function SpotifyController() {
     return new Promise((resolve, reject) => {
       request('https://api.spotify.com/v1/me/top/tracks?limit=50', {
         headers: {          
-          'Authorization': 'Bearer ' + auth.accessToken,
+          'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'
         }
       }, (error, response, body) => { 
-
         if (error) return reject(error);
 
         const data = JSON.parse(body);

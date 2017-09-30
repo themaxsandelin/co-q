@@ -117,7 +117,7 @@ app.get('/', (req, res) => {
     console.log(error);
     res.json({ error: error });
   });
-
+  
 });
 
 //DEBUG: Test to get song info from spotify and calculating its MSE

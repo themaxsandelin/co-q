@@ -8,29 +8,29 @@ const async = require('async');
 const SpotifyController = require('../controllers/spotify-controller.js')();
 
 function SongSelector() {
-
-  //Debug list of user_ids
   
 
-  function getTopSongsForAllUsers(userAuths) {      
+  function getSongsForAllUsers(userAuths) { 
+    //console.log(userAuths) 
     return new Promise((resolve, reject) => {
-      async.eachSeries(userAuths, (id, callback) => {
-        SpotifyController.getUserTopTrackIds(id)
-          .then((topTracks) => {            
-            console.log(topTracks);
+      allTracks = [];
+      async.eachSeries(userAuths, (auth, callback) => {        
+        SpotifyController.getUserTopTrackIds(auth)
+          .then((tracks) => {
+            allTracks = allTracks.concat(tracks);
             callback();
           })
         .catch((error) => callback(error));
         }, (error) => {
           if (error) return reject(error);
 
-          resolve('events');
+          resolve(allTracks);
         });
     });
   }
 
   return {
-    getTopSongsForAllUsers
+    getSongsForAllUsers
   };
 
 
