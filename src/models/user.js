@@ -44,6 +44,13 @@ function User() {
     });
   }
 
+  function setSpotifyAuth(uid, auth) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('users/' + uid + '/spotify').set(auth);
+      resolve();
+    });
+  }
+
   function authenticate(uid, token) {
     return new Promise((resolve, reject) => {
       getById(uid)
@@ -85,6 +92,7 @@ function User() {
     getByEmail,
     create,
     addAuthToken,
+    setSpotifyAuth,
     authenticate,
     deleteAuthToken
   };

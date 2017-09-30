@@ -1,5 +1,9 @@
+// Modules
+const moment = require('moment');
+
 // Components
 const Generator = require('../components/generator.js')();
+const Formatter = require('../components/formatter.js')();
 
 // Models
 const User = require('../models/user.js')();
@@ -21,11 +25,19 @@ function UserController() {
     });
   }
 
-  function createNewUserLogin(user) {
+  function createNewUserLogin(user, spotifyAuth) {
     return new Promise((resolve, reject) => {
       const token = Generator.generateUniqueString(128);
       User.addAuthToken(user.uid, token)
-        .then(() => resolve(token))
+        .then(() => {
+          spotifyAuth.expires = parseInt(moment().add(spotifyAuth.expires_in, 'seconds').format('X'));
+          spotifyAuth = Formatter.formatObjectKeys(spotifyAuth);
+          delete spotifyAuth.expiresIn;
+
+          User.setSpotifyAuth(user.uid, spotifyAuth)
+            .then(() => resolve(token))
+          .catch((error) => reject(error));
+        })
       .catch((error) => reject(error));
     });
   }

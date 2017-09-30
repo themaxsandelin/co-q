@@ -90,6 +90,7 @@ app.use((req, res, next) => {
 */
 app.get('/', (req, res) => {
   res.send('Hello, ' + req.user.name + '!');
+  console.log(req.user);
 });
 
 app.get('/login', (req, res) => {
@@ -131,19 +132,9 @@ app.get('/callback', (req, res) => {
       }
       // data keys => { auth, account }
 
-      // Auth process
-      //
-      // 1. Check if user exists in Firebase auth.
-      //    1a. If it does not, create the user and a user object in the DB.
-      //    1b. If it does exist, generate a new JWT and add it to Firebase and save it in a cookie.
-      //
-      // 2. Update the user object's properties for access token with the new access data taken from the Spotify SDK
-
       UserController.ensureUserExists(data.account)
         .then((user) => {
-
-          // Try to generate JWT and store in a browser cookie
-          UserController.createNewUserLogin(user)
+          UserController.createNewUserLogin(user, data.auth)
             .then((token) => {
               res.setHeader('Set-Cookie', [
                 'cqt=' + token + '; HttpOnly; Path=/; Expires=' + moment().add(1, 'month').format('ddd, DD MMM YYYY HH:mm:ss') + 'GMT',
