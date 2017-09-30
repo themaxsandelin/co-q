@@ -22,6 +22,8 @@ const Generator = require('./components/generator.js')();
 */
 const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
+const VibesController = require('./controllers/vibes-controller.js')();
+const EventController = require('./controllers/event-controller.js')();
 
 
 /**
@@ -90,8 +92,28 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
-  res.render('app', {
-    user: req.user
+  VibesController.getAllVibes()
+    .then((vibes) => {
+      res.render('app', {
+        user: req.user,
+        vibes: JSON.stringify(vibes),
+        vibeNames: Object.keys(vibes)
+      });
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  });
+});
+
+app.post('/create-event', (req, res) => {
+  EventController.createEvent(req.body, req.user)
+    .then((event) => {
+      res.json(event);
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
   });
 });
 
@@ -132,7 +154,6 @@ app.get('/callback', (req, res) => {
         console.log(data.error);
         return res.json({ error: data.error });
       }
-      // data keys => { auth, account }
 
       UserController.ensureUserExists(data.account)
         .then((user) => {

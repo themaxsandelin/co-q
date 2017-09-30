@@ -21,8 +21,52 @@
 <br>
 <select id="event-vibe">
   <option value="0" disabled selected>Choose vibe..</option>
+  {{#each vibeNames as |vibe i|}}
+    <option>{{ vibe }}</option>
+  {{/each}}
 </select>
 
 <br><br>
 
+<label for="event-password">Password: (optional)</label>
+<br>
+<input type="password" id="event-password">
+
+<br><br>
+
 <button id="create-event">Create</button>
+
+
+<script>
+
+  const vibes = JSON.parse('{{{ vibes }}}');
+
+  const createButton = document.getElementById('create-event');
+  createButton.addEventListener('click', initiateCreateEvent);
+
+  function initiateCreateEvent() {
+    const title = document.getElementById('event-title').value;
+    const description = document.getElementById('event-description').value;
+    const vibe  = vibes[document.getElementById('event-vibe').value];
+    const password = document.getElementById('event-password').value;
+
+    fetch('/create-event', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        title: title,
+        description: description,
+        vibe: vibe,
+        password: password
+      })
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+    }).catch((error) => {
+      console.log('Fetch error: ' + error);
+    });
+  }
+
+</script>
