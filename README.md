@@ -45,7 +45,9 @@ This will run all tasks and start the watch task to listen on changes on all .js
 
 
 ## Contributors
+
 | [<img src="https://avatars.githubusercontent.com/u/10816138" width="100px;"/><br /><sub>Johan Björk</sub>](https://github.com/jobjork) | [<img src="https://avatars.githubusercontent.com/u/11041241" width="100px;"/><br /><sub>Karl Svensson</sub>](https://github.com/knallle) |
+|:-------------:|:-------------:|
 
 ## License
 [MIT](LICENSE) © [Max Sandelin](https://github.com/themaxsandelin)
