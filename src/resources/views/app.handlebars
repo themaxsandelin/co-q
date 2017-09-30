@@ -1,0 +1,28 @@
+<h3>Hello, {{ user.name }}</h3>
+<a href="/logout">
+  <button>Log out</button>
+</a>
+
+
+<h2>Create new event</h2>
+<label for="event-title">Title: *</label>
+<br>
+<input type="text" id="event-title">
+
+<br><br>
+
+<label for="event-description">Description: *</label>
+<br>
+<textarea id="event-description" cols="60" rows="10"></textarea>
+
+<br><br>
+
+<label for="event-vibe">Vibe: *</label>
+<br>
+<select id="event-vibe">
+  <option value="0" disabled selected>Choose vibe..</option>
+</select>
+
+<br><br>
+
+<button id="create-event">Create</button>

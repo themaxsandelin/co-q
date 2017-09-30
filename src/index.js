@@ -90,9 +90,9 @@ app.use((req, res, next) => {
 * Routes
 */
 app.get('/', (req, res) => {
-  res.send('Hello, ' + req.user.name + '!');
-  console.log(req.user);
-  console.log(moment().format('X'));
+  res.render('app', {
+    user: req.user
+  });
 });
 
 app.get('/login', (req, res) => {
