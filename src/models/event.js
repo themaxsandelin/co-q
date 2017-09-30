@@ -32,6 +32,7 @@ function Event() {
     return new Promise((resolve, reject) => {
       admin.database().ref('users/' + uid + '/events').once('value', (snapshot) => {
         const eventsObj = snapshot.val();
+        if (!eventsObj) return resolve([]);
         const eventIds = [];
         Object.keys(eventsObj).forEach((key) => {
           eventIds.push(eventsObj[key]);
@@ -54,10 +55,28 @@ function Event() {
     });
   }
 
+  function getBySlug(slug) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('events').once('value', (snapshot) => {
+        let event;
+        const events = snapshot.val();
+        Object.keys(events).forEach((id) => {
+          if (events[id].slug === slug) {
+            event = events[id];
+            event.id = id;
+          }
+        });
+
+        resolve(event);
+      });
+    });
+  }
+
   return {
     create,
     getAll,
-    getAllByAuthor
+    getAllByAuthor,
+    getBySlug
   };
 }
 

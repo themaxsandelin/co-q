@@ -64,7 +64,28 @@ function EventController() {
   function getAllAuthorEvents(user) {
     return new Promise((resolve, reject) => {
       Event.getAllByAuthor(user.uid)
-        .then((events) => resolve(events))
+        .then((events) => {
+          events.forEach((evt, i) => {
+            events[i].url = process.siteUrl + '/event/' + events[i].slug;
+          });
+          resolve(events);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
+  function getEventBySlug(slug, user) {
+    return new Promise((resolve, reject) => {
+      Event.getBySlug(slug)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          event.isAuthor = (user.uid === event.author.uid);
+          event.hasPassword = event.hasOwnProperty(password);
+          delete event.password;
+          delete event.salt;
+          resolve(event);
+        })
       .catch((error) => reject(error));
     });
   }
@@ -72,7 +93,8 @@ function EventController() {
   return {
     createEvent,
     getAllEventSlugs,
-    getAllAuthorEvents
+    getAllAuthorEvents,
+    getEventBySlug
   };
 }
 

@@ -100,7 +100,7 @@ app.get('/', (req, res) => {
       EventController.getAllAuthorEvents(req.user)
         .then((events) => {
 
-          res.render('app', {
+          res.render('home', {
             user: req.user,
             events: events,
             vibes: JSON.stringify(vibes),
@@ -117,6 +117,7 @@ app.get('/', (req, res) => {
     console.log(error);
     res.json({ error: error });
   });
+
 });
 
 //DEBUG: Test to get song info from spotify and calculating its MSE
@@ -147,6 +148,20 @@ app.post('/create-event', (req, res) => {
   EventController.createEvent(req.body, req.user)
     .then((event) => {
       res.json(event);
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  });
+});
+
+app.get('/event/:slug', (req, res) => {
+  EventController.getEventBySlug(req.params.slug, req.user)
+    .then((event) => {
+      res.render('event', {
+        user: req.user,
+        event: event
+      });
     })
   .catch((error) => {
     console.log(error);
