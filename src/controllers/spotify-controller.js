@@ -51,6 +51,7 @@ function SpotifyController() {
     });
   }
 
+
   function refreshAccessToken(refreshToken) {
     return new Promise((resolve, reject) => {
       request.post('https://accounts.spotify.com/api/token', {
@@ -73,10 +74,37 @@ function SpotifyController() {
     });
   }
 
+  function getSongInfoById(auth, song_id) {
+    return new Promise((resolve, reject) => {
+      base_url = 'https://api.spotify.com/v1/audio-features/';
+      req_url = base_url + song_id;
+      request('https://api.spotify.com/v1/me', {
+        headers: {
+          'Authorization': 'Bearer ' + auth.access_token,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }, (error, response, body) => {
+        if (error) return reject(error);
+
+        const data = JSON.parse(body);
+        if (data.error) return reject(data.error);
+
+        resolve({
+          songInfoJson: data
+        });
+
+      });
+    });
+  }
+
   return {
     getAccessToken,
     getAccountInfo,
-    refreshAccessToken
+    refreshAccessToken,
+    getSongInfoById,
+    getAuthToken,
+    getAccountInfo
   };
 }
 
