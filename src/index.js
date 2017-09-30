@@ -28,6 +28,17 @@ const UserController = require('./controllers/user-controller.js')();
 const VibesController = require('./controllers/vibes-controller.js')();
 const EventController = require('./controllers/event-controller.js')();
 
+/**
+* Helper method
+*/
+function compareMse(a,b) {
+  if (a[1] < b[1])
+    return -1;
+  if (a[1] > b[1])
+    return 1;
+  return 0;
+}
+
 
 /**
 * Express setup
@@ -162,42 +173,69 @@ app.get('/event/:slug', (req, res) => {
     UserController.getAccessTokens()
       .then((tokens) => {        
         SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {
-              var mseAndSongs = [];                          
-              async.eachSeries(tracks, (track, callback) => {       
-                var infosAndSongs = [];                
-                auth = req.user.spotify;                
-                SpotifyController.getSongInfoById(auth, track)
+            .then((tracks) => {              
+              auth = req.user.spotify;
+              keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
+              SpotifyController.getMultipleSongInfosByIds(auth, tracks)
                   .then((data) => {
-                    //console.log(data)
-                    keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
-                    info = Formatter.filterObjectToArray(data, ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']);
-                    //vibe = Formatter.filterObjectToArray(event.vibe, ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']);
-                    //console.log(info)
-                    //console.log(vibe)
+                    // console.log(data.audio_features[0])
+                    var trackFeatures = [];                    
+                    data.audio_features.forEach((part) => {                      
+                      feature = Formatter.filterObjectToArray(part, keys);                      
+                      trackFeatures.push(feature)
+                    });
+                    //Sort the vibe correctly
                     vibe = [];
                     keys.forEach(function(key) {
-                        vibe.push(event.vibe[key]);
+                      vibe.push(event.vibe[key]);
                     });
-                    mse = FeatureExtractor.weightedMse(info, vibe)
-                    mseAndSongs.push([track, mse]);
-                    
-                    //mseAndSongs = mseAndSongs.push([track, mse]);
-                    callback();
+                    var mseAndSongs = [];
+                    for (var i=0; i<tracks.length; i++) {
+                      track = tracks[i];
+                      trackFeature = trackFeatures[i];
+                      var mse = FeatureExtractor.weightedMse(trackFeature, vibe);
+                      mseAndSongs.push([track, mse]);
+                    }
+                    mseAndSongs.sort(compareMse); 
+                    // trackFeatures.forEach((feature) => {
+                    //   mse = FeatureExtractor.weightedMse(info, vibe);
+                    //   mseAndSongs.push([track, mse]);
+                    // });
+                    // mse = FeatureExtractor.weightedMse(info, vibe)
+                    // mseAndSongs.push([track, mse]);
+                    console.log(mseAndSongs)
                   })
-                .catch((error) => callback(error));
-                }, (error) => {
-                  if (error) return reject(error);
-                  console.log('----DONE')                  
-                  console.log(mseAndSongs)
-                });
-
-              //console.log(tracks);
+                .catch((error) => reject(error));
+              // var mseAndSongs = [];                          
+              // async.eachSeries(tracks, (track, callback) => {       
+              //   var infosAndSongs = [];                
+              //   auth = req.user.spotify;                
+              //   SpotifyController.getSongInfoById(auth, track)
+              //     .then((data) => {
+              //       keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
+              //       info = Formatter.filterObjectToArray(data, keys);
+              //       vibe = [];
+              //       keys.forEach(function(key) {
+              //           vibe.push(event.vibe[key]);
+              //       });
+              //       mse = FeatureExtractor.weightedMse(info, vibe)
+              //       mseAndSongs.push([track, mse]);
+                    
+              //       //mseAndSongs = mseAndSongs.push([track, mse]);
+              //       callback();
+              //     })
+              //   .catch((error) => callback(error));
+              //   }, (error) => {
+              //     if (error) return reject(error);
+              //     console.log('----DONE')
+              //     //Sort the songs in ascending order after the mse
+              //     mseAndSongs.sort(compareMse); 
+              //     console.log(mseAndSongs);                 
+              //   });
             })
           .catch((error) => reject(error));
       })
     .catch((error) => console.log('OH SHIT'));
-      console.log(event.vibe)
       res.render('event', {
         user: req.user,
         event: event,
