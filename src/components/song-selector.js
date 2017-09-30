@@ -1,19 +1,31 @@
 // Modules
 const math = require('mathjs');
+const async = require('async');
+
+/**
+* Controllers
+*/
+const SpotifyController = require('../controllers/spotify-controller.js')();
 
 function SongSelector() {
 
   //Debug list of user_ids
   
 
-  function getTopSongsForAllUsers(user_auths) {    
+  function getTopSongsForAllUsers(userAuths) {      
     return new Promise((resolve, reject) => {
-      top_songs_for_all_users = [];      
-      for (i = 0; i < user_auths.length; i++) {
-          user_auth = user_auths[i];
-          getUserTopTrackIds(auth)       
-      }
-      resolve('Kalle');
+      async.eachSeries(userAuths, (id, callback) => {
+        SpotifyController.getUserTopTrackIds(id)
+          .then((topTracks) => {            
+            console.log(topTracks);
+            callback();
+          })
+        .catch((error) => callback(error));
+        }, (error) => {
+          if (error) return reject(error);
+
+          resolve('events');
+        });
     });
   }
 
