@@ -102,9 +102,7 @@ function SpotifyController() {
     getAccessToken,
     getAccountInfo,
     refreshAccessToken,
-    getSongInfoById,
-    getAuthToken,
-    getAccountInfo
+    getSongInfoById
   };
 }
 
