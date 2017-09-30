@@ -14,6 +14,10 @@ function EventController() {
     return crypto.pbkdf2Sync(password, salt, 10000, 256, 'sha512').toString('hex');
   }
 
+  function verifyPassword(input, password, salt) {
+    return (hashPassword(input, salt) === password);
+  }
+
   function createEvent(body, user) {
     return new Promise((resolve, reject) => {
       Validator.validateEventBody(body)
@@ -80,13 +84,63 @@ function EventController() {
         .then((event) => {
           if (!event) return reject('Event not found.');
 
-          event.isAuthor = (user.uid === event.author.uid);
-          event.hasPassword = event.hasOwnProperty('password');
-          if (event.hasPassword) {
-            delete event.password;
-            delete event.salt;
+          const attendeesObj = event.attendees;
+          event.attendees = [];
+          if (attendeesObj) {
+            Object.keys(attendeesObj).forEach((id) => {
+              event.attendees.push(attendeesObj[id]);
+            });
           }
+
+          const hasPassword = event.hasOwnProperty('password');
+
+          event.isAuthor = (user.uid === event.author.uid);
+          event.isAttending = (event.isAuthor || event.attendees.indexOf(user.uid) > -1);
+          event.needsPassword = (!event.isAuthor && hasPassword && !event.isAttending);
+
+          delete event.password;
+          delete event.salt;
           resolve(event);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
+  function singupUserForEvent(user, body) {
+    return new Promise((resolve, reject) => {
+      if (!body.eventId) return reject('Missing eventId parameter.');
+
+      Event.getById(body.eventId)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          if (body.password && event.password && !verifyPassword(body.password, event.password, event.salt)) return reject('Incorrect event password.');
+
+          Event.signupUser(body.eventId, user.uid)
+            .then(() => resolve())
+          .catch((error) => reject(error));
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
+  function removeEventAttendee(user, body) {
+    return new Promise((resolve, reject) => {
+      if (!body.eventId) return reject('Missing eventId parameter');
+
+      Event.getById(body.eventId)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          let attendeeKey;
+          Object.keys(event.attendees).forEach((key) => {
+            if (event.attendees[key] === user.uid) attendeeKey = key;
+          });
+          if (!attendeeKey) return reject('You are not an attendee at this event.');
+
+          Event.removeAttendee(body.eventId, attendeeKey)
+            .then(() => resolve())
+          .catch((error) => reject(error));
         })
       .catch((error) => reject(error));
     });
@@ -96,7 +150,9 @@ function EventController() {
     createEvent,
     getAllEventSlugs,
     getAllAuthorEvents,
-    getEventBySlug
+    getEventBySlug,
+    singupUserForEvent,
+    removeEventAttendee
   };
 }
 

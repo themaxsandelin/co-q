@@ -72,11 +72,28 @@ function Event() {
     });
   }
 
+  function signupUser(id, uid) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('events/' + id + '/attendees').push(uid);
+      resolve();
+    });
+  }
+
+  function removeAttendee(id, attendeeKey) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('events/' + id + '/attendees/' + attendeeKey).remove();
+      resolve();
+    });
+  }
+
   return {
     create,
     getAll,
+    getById,
     getAllByAuthor,
-    getBySlug
+    getBySlug,
+    signupUser,
+    removeAttendee
   };
 }
 

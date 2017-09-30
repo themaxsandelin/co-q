@@ -75,7 +75,7 @@ function UserController() {
 
   function logoutUser(user) {
     return new Promise((resolve, reject) => {
-      User.deleteAuthToken(user.uid, user.authToken.key)
+      User.removeAuthToken(user.uid, user.authToken.key)
         .then(() => resolve())
       .catch((error) => reject(error));
     });
