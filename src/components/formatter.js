@@ -38,6 +38,14 @@ function Formatter() {
     }, {});
   }
 
+  function filterObjectToArray(raw, keys) {
+    filteredArray = [];
+    Object.keys(raw).filter(key => keys.includes(key)).reduce((obj, key) => {
+      filteredArray.push(raw[key]);      
+    }, {});
+    return filteredArray;
+  }
+
   function filterObjects(array, keys) {
     const results = [];
     array.forEach((item) => {
@@ -57,6 +65,7 @@ function Formatter() {
     formatObjectKeys,
     formatObjectKeysMulti,
     filterObject,
+    filterObjectToArray,
     filterObjects,
     formatSpotifyAuth
   };
