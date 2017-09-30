@@ -43,6 +43,7 @@ function compareMse(a,b) {
 * Constants
 */
 const MAX_SEED = 5;
+const keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
 
 
 /**
@@ -180,23 +181,20 @@ app.get('/event/:slug', (req, res) => {
         tokens = ['BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw','BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw']; //DEBUG      
         SongSelector.getSongsForAllUsers(tokens)
             .then((tracks) => {              
-              auth = req.user.spotify;
-              keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
-              var numBatches = tokens.length;
-              for (var j=0; j<numBatches; j++) {
-                start = tracks.length*j;
-                end = start + tracks.length;
-                sliceOfTracks = tracks.slice(start,end);
-                console.log()
-              }
+
+              //Extract auth 
+              auth = req.user.spotify;              
 
               SpotifyController.getMultipleSongInfosByIds(auth, tracks)
                   .then((data) => {
+                    
+                    //Extract only the relevant features of each track (defined by $keys)
                     var trackFeatures = [];                    
                     data.audio_features.forEach((part) => {                      
                       feature = Formatter.filterObjectToArray(part, keys);                      
                       trackFeatures.push(feature)
                     });
+
                     //Sort the vibe correctly
                     vibe = [];
                     keys.forEach(function(key) {
