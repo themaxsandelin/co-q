@@ -18,7 +18,6 @@ function FeatureExtractor() {
 
   return {
     weightedMse,
-    jsonToInfoVector
   };
 }
 

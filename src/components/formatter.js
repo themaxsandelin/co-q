@@ -65,6 +65,7 @@ function Formatter() {
     formatObjectKeys,
     formatObjectKeysMulti,
     filterObject,
+    filterObjectToArray,
     filterObjects,
     formatSpotifyAuth
   };
