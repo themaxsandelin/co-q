@@ -16,7 +16,12 @@ The ultimate music app for your event.
     ```
     $ npm install
     ```
-4. Hack away! 🎉
+4. Create a local `.env` file by copying the `.env-example` file, and provide your app's ID and Secret.
+    ```
+    $ cp .env-example .env
+    ```
+
+5. Hack away! 🎉
 
 
 ## License

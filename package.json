@@ -28,7 +28,10 @@
     "site": "node src/index.js"
   },
   "dependencies": {
+    "dotenv": "^4.0.0",
     "express": "^4.16.0",
-    "express-handlebars": "^3.0.0"
+    "express-handlebars": "^3.0.0",
+    "firebase-admin": "^5.3.0",
+    "request": "^2.83.0"
   }
 }
