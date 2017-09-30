@@ -3,6 +3,11 @@ const math = require('mathjs');
 const async = require('async');
 
 /**
+* Components
+*/
+const FeatureExtractor = require('./feature-extractor.js')();
+
+/**
 * Controllers
 */
 const SpotifyController = require('../controllers/spotify-controller.js')();
@@ -29,8 +34,20 @@ function SongSelector() {
     });
   }
 
+  function getMostRelevantTracks(tracks, targetVibe) {
+    mseTrackPairs = [];
+    for (i = 0; i < tracks.length; i++) {
+      track = tracks[i]
+      mse = FeatureExtractor.weightedMse(track, targetVibe);
+      mseTrackPairs.add([mse, track])
+    }
+    console.log(mseTrackPairs)
+    return mseTrackPairs
+  }
+
   return {
-    getSongsForAllUsers
+    getSongsForAllUsers,
+    getMostRelevantTracks
   };
 
 
