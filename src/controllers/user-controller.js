@@ -81,12 +81,45 @@ function UserController() {
     });
   }
 
+  function getAllUsers() {
+    return new Promise((resolve, reject) => {
+      const users = [];
+      User.getAll()
+        .then((usersObj) => {
+          Object.keys(usersObj).forEach((uid) => {
+            const user = usersObj[uid];
+            user.uid = uid;
+            users.push(user);
+          });
+          resolve(users);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
+  function getAccessTokens() {
+    return new Promise((resolve, reject) => {
+      const tokens = [];
+      const userTokens = getAllUsers()
+        .then((users) => {
+          users.forEach((u) => {
+            const token = u.spotify.accessToken;
+            tokens.push(token);
+          });
+          resolve(tokens);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
   return {
     ensureUserExists,
     createNewUserLogin,
     updateSpotifyAuth,
     authenticateUser,
-    logoutUser
+    logoutUser,
+    getAllUsers,
+    getAccessTokens
   };
 }
 

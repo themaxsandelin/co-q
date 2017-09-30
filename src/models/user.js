@@ -19,6 +19,14 @@ function User() {
     });
   }
 
+  function getAll() {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('users').once('value', (snapshot) => {
+        resolve(snapshot.val());
+      });
+    });
+  }
+
   function create(spotifyAccount) {
     return new Promise((resolve, reject) => {
       admin.auth().createUser({ email: spotifyAccount.email, displayName: spotifyAccount.displayName })
@@ -90,6 +98,8 @@ function User() {
 
   return {
     getByEmail,
+    getById,
+    getAll,
     create,
     addAuthToken,
     setSpotifyAuth,
