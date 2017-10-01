@@ -71,16 +71,13 @@ function SongSelector() {
   function getTopTracksForEvent(req, event, tokens) {     
     return new Promise((resolve, reject) => {  
 
-      // UserController.getAccessTokens() //Should be replaved by getMultipleUserTokensById
-            // .then((tokens) => {
-              //tokens = ['BQBAqiWopo-OK0sY71akZpdLyyp3arHYH08nNj3eMtehtpBCsKny0CsSJ7KGurQbvuzjMRI4JeZDhMkxqu6kD61MyDBkMVpsxbuE5JTLqB1QzgLDTVMtPAuKTNGDu8XbGOpO4b5p-_NPn6vs1X8','BQBAqiWopo-OK0sY71akZpdLyyp3arHYH08nNj3eMtehtpBCsKny0CsSJ7KGurQbvuzjMRI4JeZDhMkxqu6kD61MyDBkMVpsxbuE5JTLqB1QzgLDTVMtPAuKTNGDu8XbGOpO4b5p-_NPn6vs1X8']; //DEBUG      
               getSongsForAllUsers(tokens)
                 .then((tracks) => {              
-                  console.log('Kalle')
+                  
                   //Extract auth 
                   auth = req.user.spotify;              
-
-                  SpotifyContronller.getMultipleSongInfosByIds(auth, tracks)
+                  
+                  SpotifyController.getMultipleSongInfosByIds(auth, tracks)
                       .then((trackInfo) => {
                         
                         //Extract only the relevant features of each track (defined by $keys)
@@ -108,11 +105,17 @@ function SongSelector() {
                         //Sort in ascending order based on MSE
                         mseAndTracks.sort(compareMse); 
 
-                        //Extract the best songs to use for seed
+                        //Extract the best tracks to use for seed
                         bestTracks = []
-                        for (var i=0; i<MAX_SEED; i++) {
-                          bestTracks.push(mseAndTracks[i][0]);
+                        var havePlentyOfTracks = (mseAndTracks.length > MAX_SEED);
+                        if (havePlentyOfTracks) {                          
+                          for (var i=0; i<MAX_SEED; i++) {
+                            bestTracks.push(mseAndTracks[i][0]);
+                          }
+                        } else {
+                          mseAndTracks.forEach((track) => bestTracks.push(track));
                         }
+                        
 
                         resolve(bestTracks);
 
@@ -123,7 +126,6 @@ function SongSelector() {
               .catch((error) => reject(error));
             })
           .catch((error) => console.log('OH SHIT'));
-        // })
   }
 
 

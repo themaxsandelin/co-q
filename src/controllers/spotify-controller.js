@@ -4,17 +4,6 @@
 const request = require('request');
 
 /**
-* Components
-*/
-// const FeatureExtractor = require('../components/feature-extractor.js')();
-// const SongSelector = require('../components/song-selector.js')();
-
-/**
-* Controllers
-*/
-// const UserController = require('./user-controller.js')();
-
-/**
 * Extend Set
 */
 Set.prototype.union = function(setB) {
@@ -120,7 +109,7 @@ function SpotifyController() {
   function getMultipleSongInfosByIds(auth, song_ids) {    
     return new Promise((resolve, reject) => {
       song_ids_str = song_ids.join() 
-       
+
       request('https://api.spotify.com/v1/audio-features/?ids=' + song_ids_str, {
         headers: {
           'Authorization': 'Bearer ' + auth.accessToken,
