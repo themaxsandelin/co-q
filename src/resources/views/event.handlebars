@@ -13,10 +13,21 @@
   </div>
 {{ else }}
 
-  {{#if event.needsPassword }}
-    <label for="event-password">Enter the event password: *</label>
-  {{/if}}
-  <button id="join-button">Join event</button>
+  <div class="join-event-container">
+    <div class="join-event">
+      <h1>{{ event.title }}</h1>
+      <p>{{ event.description }}</p>
+      {{#if event.needsPassword }}
+        <div class="field-list">
+          <div class="field">
+            <label for="event-password">Enter the event password: *</label>
+            <input type="password" id="event-password">
+          </div>
+        </div>
+      {{/if}}
+      <button id="join-button" class="primary">Join event</button>
+    </div>
+  </div>
 
 {{/if}}
 

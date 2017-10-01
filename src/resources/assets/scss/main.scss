@@ -89,6 +89,18 @@ button {
       border-color: transparent;
     }
   }
+
+  &.warning {
+    background: #BF3030;
+    border-color: transparent;
+
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #A92222;
+      border-color: transparent;
+    }
+  }
 }
 
 label {
@@ -541,6 +553,30 @@ section.modal-container {
       .button-wrapper {
         margin: 40px 0 0;
       }
+    }
+  }
+}
+
+.join-event-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+
+  .join-event {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > p {
+      color: #CBCBCB;
+      margin: 5px 0 0;
+    }
+
+    .field-list {
+      margin: 40px 0;
     }
   }
 }

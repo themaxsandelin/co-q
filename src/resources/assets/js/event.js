@@ -19,7 +19,10 @@ function attemptJoinEvent() {
     credentials: 'include',
     body: JSON.stringify(data)
   }).then((response) => response.json()).then((json) => {
-    console.log(json);
+    if (json.error) return alert(json.error);
+    if (json.success) {
+      window.location.reload();
+    }
   }).catch((error) => {
     console.log('Fetch error: ' + error);
   })
@@ -34,7 +37,10 @@ function leaveEvent() {
     credentials: 'include',
     body: JSON.stringify({ eventId: eventId })
   }).then((response) => response.json()).then((json) => {
-    console.log(json);
+    if (json.error) return alert(json.error);
+    if (json.success) {
+      window.location.href = '/';
+    }
   }).catch((error) => {
     console.log('Fetch error: ' + error);
   });
