@@ -586,10 +586,10 @@ section.modal-container {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  padding: 0 0 60px;
 
   aside {
     width: 380px;
-    height: 200px;
     position: relative;
   }
 
@@ -597,7 +597,6 @@ section.modal-container {
     width: 0px;
     flex-grow: 1;
     margin: 0 0 0 20px;
-    height: 200px;
 
   }
 }
@@ -666,6 +665,203 @@ section.modal-container {
         color: #fff;
         line-height: 41px;
         padding: 0 0 0 10px;
+      }
+    }
+  }
+}
+
+.player-container {
+  width: 100%;
+  height: 240px;
+  display: flex;
+  flex-wrap: wrap;
+
+  .artwork-wrapper {
+    width: 240px;
+    height: 240px;
+    background: #0C0C0C;
+    border: 1px solid #303030;
+    border-radius: 8px 0 0 8px;
+    padding: 40px;
+
+    .artwork {
+      width: 100%;
+      height: 100%;
+      background-color: #1D1D1D;
+    }
+  }
+
+  .player-wrapper {
+    width: 0px;
+    flex-grow: 1;
+    background: #121212;
+    border-top: 1px solid #303030;
+    border-right: 1px solid #303030;
+    border-bottom: 1px solid #303030;
+    border-radius: 0 8px 8px 0;
+    padding: 40px;
+
+    h3 {
+      font-size: 23px;
+      line-height: 30px;
+    }
+
+    > p {
+      margin: 2px 0 0;
+      color: #8D8D8D;
+    }
+
+    .controls {
+      height: 24px;
+      position: relative;
+      margin: 24px 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+
+      .control {
+        width: 24px;
+        height: 24px;
+        background: #fff;
+        cursor: pointer;
+
+        &.prev {
+          background: url(./icons/back.svg) no-repeat center;
+          background-size: 24px;
+        }
+
+        &.next {
+          background: url(./icons/next.svg) no-repeat center;
+          background-size: 24px;
+        }
+
+        &.playing {
+          background: url(./icons/pause.svg) no-repeat center;
+          background-size: 20px;
+        }
+
+        &.paused {
+          background: url(./icons/play.svg) no-repeat center;
+          background-size: 24px;
+        }
+
+        &.margin {
+          margin: 0 20px;
+        }
+      }
+    }
+
+    .tracker {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+
+      p {
+        width: 50%;
+        font-size: 12px;
+        font-weight: 500;
+        color: #8D8D8D;
+
+        &:nth-child(2) {
+          text-align: right;
+        }
+      }
+
+      .track {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        position: relative;
+        background: #454545;
+        margin: 10px 0 0;
+        overflow: hidden;
+
+
+        .marker {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          border-radius: 2px;
+          background: #1DB954;
+          left: -100%;
+        }
+      }
+    }
+  }
+}
+
+table.player-queue {
+  width: 100%;
+  margin: 20px 0 0;
+  border-collapse: separate;
+
+  thead {
+    width: 100%;
+
+    tr {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+
+      td {
+        height: 40px;
+        background: #0C0C0C;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        line-height: 38px;
+        margin: 0;
+        padding: 0 15px;
+        color: #8D8D8D;
+        border-top: 1px solid #303030;
+        border-bottom: 1px solid #303030;
+
+        &:first-of-type {
+          border-top-left-radius: 8px;
+          border-left: 1px solid #303030;
+        }
+
+        &:last-of-type {
+          border-top-right-radius: 8px;
+          border-right: 1px solid #303030;
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  tbody {
+    width: 100%;
+
+    tr {
+      width: 100%;
+
+      &:last-of-type {
+        td:first-of-type {
+          border-bottom-left-radius: 8px;
+        }
+
+        td:last-of-type {
+          border-bottom-right-radius: 8px;
+        }
+      }
+
+      td {
+        background: #121212;
+        font-size: 13px;
+        font-weight: 400;
+        color: #fff;
+        line-height: 20px;
+        padding: 15px;
+        border-bottom: 1px solid #303030;
+
+        &:first-of-type {
+          border-left: 1px solid #303030;
+        }
+
+        &:last-of-type {
+          border-right: 1px solid #303030;
+          text-align: right;
+        }
       }
     }
   }

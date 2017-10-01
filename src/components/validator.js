@@ -1,10 +1,5 @@
 function Validator() {
 
-  function validateTitle(title) {
-    const reg = /^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/;
-    return reg.test(title);
-  }
-
   function isNumber(num) {
     return isFinite(num) && !isNaN(parseFloat(num));
   }
@@ -40,7 +35,7 @@ function Validator() {
 
   function validateEventBody(body) {
     return new Promise((resolve, reject) => {
-      if (!body.title || !validateTitle(body.title)) return reject('Please provide a title that only contains letter and numbers.');
+      if (!body.title) return reject('Please provide a title that only contains letter and numbers.');
       if (!body.slug || !validateSlug(body.slug)) return reject('Please provide a slug that only contains letters and dashes.');
       if (!body.description) return reject('Please provide a description.');
       if (!body.vibe || !validateVibe(body.vibe)) return reject('Please provide a valid vibe.');

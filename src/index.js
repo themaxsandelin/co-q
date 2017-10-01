@@ -163,6 +163,7 @@ app.get('/event/:slug', (req, res) => {
 
           res.render('event', {
             user: req.user,
+            jsonAuth: JSON.stringify(req.user.spotify),
             event: event,
             eventJson: JSON.stringify(event)
           });
@@ -195,6 +196,19 @@ app.post('/leave-event', (req, res) => {
     console.log(error);
     res.json({ error: error });
   })
+});
+
+app.post('/start-event', (req, res) => {
+  if (!req.body.eventId) return reject('Missing eventId paramater.');
+
+  EventController.startEvent(req.body.eventId, req.user)
+    .then((songs) => {
+      res.json(songs);
+    })
+  .catch((error) => {
+    console.log(error);
+    res.json({ error: error });
+  });
 });
 
 

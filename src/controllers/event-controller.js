@@ -210,20 +210,15 @@ function EventController() {
           var genreVec = [];
           UserController.getMultipleUserTokensById(event.attendees)
             .then((tokens) => {
-
               SpotifyController.getTopGenresForEvent(tokens)
                 .then((genres) => {
-                  console.log(genres),
                   SongSelector.getTopTracksForEvent(event, tokens)
                       .then((tracks) => {
-                        console.log(tracks)
                         SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
                           .then((recommendation) => {
 
                             recommendationTrackIds = []
-                            recommendation.tracks.forEach((track) => recommendationTrackIds.push(track.id))
-                            console.log(recommendationTrackIds)
-
+                            recommendation.tracks.forEach((track) => recommendationTrackIds.push('spotify:track:' + track.id))
                             resolve(recommendationTrackIds);
                           })
                           .catch((error) => reject(error))
