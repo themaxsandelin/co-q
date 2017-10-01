@@ -14,6 +14,11 @@ Set.prototype.union = function(setB) {
   return union;
 }
 
+/**
+* Constants
+*/
+const MAX_SEED_GENRES = 2;
+
 
 function SpotifyController() {
 
@@ -112,7 +117,7 @@ function SpotifyController() {
 
       request('https://api.spotify.com/v1/audio-features/?ids=' + song_ids_str, {
         headers: {
-          'Authorization': 'Bearer ' + auth.accessToken,
+          'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
@@ -133,13 +138,13 @@ function SpotifyController() {
     return new Promise((resolve, reject) => {
       request('https://api.spotify.com/v1/me/top/artists?limit=3', {
         headers: {          
-          'Authorization': 'Bearer ' + auth.accessToken,
+          'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'
         }
       }, (error, response, body) => { 
 
         if (error) return reject(error);
-        console.log(body)
+        
         const data = JSON.parse(body);
 
         if (data.error) return reject(data.error);
@@ -159,6 +164,7 @@ function SpotifyController() {
   }
 
     function getUserTopTrackIds(auth) {  
+      
     return new Promise((resolve, reject) => {      
       request('https://api.spotify.com/v1/me/top/tracks?limit=10', {
         headers: {          
@@ -168,7 +174,7 @@ function SpotifyController() {
       }, (error, response, body) => { 
         if (error) return reject(error);
         const data = JSON.parse(body);
-
+        
         if (data.error) return reject(data.error);
 
         track_ids = [];
@@ -183,20 +189,22 @@ function SpotifyController() {
     });
   }
 
-  function getSongsFromSeeds(auth, seedSongs) {     
+  function getSongsFromSeeds(auth, seedTracks, seedGenres) {     
     return new Promise((resolve, reject) => {  
       baseUrl = 'https://api.spotify.com/v1/recommendations?';
       market = 'market=SE';
-      seed = '&seed_tracks='+seedSongs.join();
+      seed = '&seed_tracks='+seedTracks.join();
+      seed = seed + '&seed_genres=' + seedGenres.join();
       limit = '&limit=20'
-      req_url = baseUrl + market + seed + limit      
+      req_url = baseUrl + market + seed + limit 
+         
       request(req_url, {
         headers: {          
-          'Authorization': 'Bearer ' + auth.accessToken,
+          'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'
         }
       }, (error, response, body) => { 
-
+        
         if (error) return reject(error);
         const data = JSON.parse(body);
         
@@ -227,18 +235,18 @@ function SpotifyController() {
   }
 
   function getTopGenresForEvent(tokens) {
-    console.log('Kalle5')
+    
     return new Promise((resolve, reject) => {
       getUserTopGenres(tokens)
         .then((genrePerUser) => {
-          console.log('Kalle6')
+          
         var genresVec = [];
         genrePerUser.forEach((g) => genresVec.push(g));
-        console.log('Kalle4')
+        
         var genreCount = {};
         genresVec.map( function (a) { if (a in genreCount) genreCount[a] ++; else genreCount[a] = 1; } );
         var newGenreVec = [];
-        console.log('Kalle3')
+        
         for(a in genreCount){
           newGenreVec.push([a,genreCount[a]])
         }
@@ -247,9 +255,10 @@ function SpotifyController() {
         var sortedGenres = [].concat.apply([], newGenreVec);
         var topGenres = [];
 
-        for(i=0; i<5; i++){
+        for(i=0; i<MAX_SEED_GENRES; i++){
           topGenres.push(newGenreVec[i][0]);
-        }
+        }   
+
         resolve(topGenres);
         })
       .catch((error) => reject(error));

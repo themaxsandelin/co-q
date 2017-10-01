@@ -114,12 +114,13 @@ function UserController() {
     });
   }
 
-  function getMultipleUserTokensById(idList) {
+  function getMultipleUserTokensById(idList) {    
     return new Promise((resolve, reject) => {
       const accessTokens = [];
-      async.eachSeries(idList, (uid, callback) => {
+      async.eachSeries(idList, (uid, callback) => {        
         User.getById(uid)
           .then((user) => {
+
             accessTokens.push(user.spotify.accessToken);
             callback();
           })

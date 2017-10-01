@@ -4,6 +4,7 @@ const crypto = require('crypto');
 // Components
 const Validator = require('../components/validator.js')();
 const Generator = require('../components/generator.js')();
+const SongSelector = require('../components/song-selector.js')();
 
 /**
 * Controllers
@@ -176,17 +177,15 @@ function EventController() {
   }
 
   function startEvent(eventId, user) {
-    return new Promise((resolve, reject) => {
-      // console.log(eventId)
-      // console.log(user)
+    return new Promise((resolve, reject) => {      
       if (!eventId) return reject('Missing eventId parameter');
-      
       Event.getById(eventId)
         .then((event) => {
           if (!event) return reject('Event not found.');
 
           const attendeesObj = event.attendees;
           event.attendees = [];
+
           if (attendeesObj) {
             Object.keys(attendeesObj).forEach((id) => {
               event.attendees.push(attendeesObj[id]);
@@ -195,17 +194,25 @@ function EventController() {
           var genreVec = [];
           UserController.getMultipleUserTokensById(event.attendees)
             .then((tokens) => {
-              console.log('Kalle')
-              SpotifyController.getTopGenresForEvent(tokens)
-              console.log('Kalle')
-            })  
-            .then((genres) => {
-              console.log('Hej');
-              console.log(genres);
-              resolve('Hej');
 
-            })
-          .catch((error) => reject(error));
+              SpotifyController.getTopGenresForEvent(tokens)
+                .then((genres) => {
+                  console.log(genres),
+                  SongSelector.getTopTracksForEvent(event, tokens)
+                      .then((tracks) => {
+                        console.log(tracks)
+                        SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
+                          .then((recommendation) => {
+                            console.log(recommendation);
+                          })
+                          .catch((error) => reject(error))
+                      })
+                    .catch((error) => reject('getTopTracksForEvent failed'));
+                  resolve('Hej');}) 
+                .catch((error) => reject('getTopGenresForEvent'));
+            })                            
+
+          .catch((error) => reject('getMultipleUserTokensById'));
         })
       .catch((error) => reject(error));
 

@@ -27,7 +27,7 @@ function compareMse(a,b) {
 /**
 * Constants
 */
-const MAX_SEED = 5;
+const MAX_SEED_TRACKS = 3;
 const keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
 
 function SongSelector() {
@@ -39,9 +39,9 @@ function SongSelector() {
       async.eachSeries(userAuths, (auth, callback) => {        
         SpotifyController.getUserTopTrackIds(auth)
           .then((tracks) => {
-            //console.log(tracks)
+            
             allTracks = allTracks.concat(tracks);
-            //console.log(allTracks)
+            
             callback();
           })
         .catch((error) => callback(error));
@@ -54,28 +54,29 @@ function SongSelector() {
   }
 
   function getMostRelevantTracks(tracks, targetVibe) {
-    //console.log(tracks)
+    
     mseTrackPairs = [];
     for (i = 0; i < tracks.length; i++) {
-      //console.log(i);
+      
       track = tracks[i];
-      //console.log(i);
+      
       mse = FeatureExtractor.weightedMse(track, targetVibe);
       mseTrackPairs.add([mse, track])
     }
-    //console.log(mseTrackPairs)
+    
     return mseTrackPairs
   }
 
 
-  function getTopTracksForEvent(req, event, tokens) {     
+  function getTopTracksForEvent(event, tokens) {     
     return new Promise((resolve, reject) => {  
 
               getSongsForAllUsers(tokens)
                 .then((tracks) => {              
-                  
+                  // TODO: tracks.unique()
                   //Extract auth 
-                  auth = req.user.spotify;              
+                  auth = tokens[0];   
+
                   
                   SpotifyController.getMultipleSongInfosByIds(auth, tracks)
                       .then((trackInfo) => {
@@ -107,23 +108,22 @@ function SongSelector() {
 
                         //Extract the best tracks to use for seed
                         bestTracks = []
-                        var havePlentyOfTracks = (mseAndTracks.length > MAX_SEED);
+                        var havePlentyOfTracks = (mseAndTracks.length > MAX_SEED_TRACKS);
                         if (havePlentyOfTracks) {                          
-                          for (var i=0; i<MAX_SEED; i++) {
+                          for (var i=0; i<MAX_SEED_TRACKS; i++) {
                             bestTracks.push(mseAndTracks[i][0]);
                           }
                         } else {
                           mseAndTracks.forEach((track) => bestTracks.push(track));
                         }
-                        
 
                         resolve(bestTracks);
 
                       })
-                    .catch((error) => reject(error));
+                    .catch((error) => reject('getMultipleSongInfosByIds failed'));
 
                 })
-              .catch((error) => reject(error));
+              .catch((error) => reject('getSongsForAllUsers failed'));
             })
           .catch((error) => console.log('OH SHIT'));
   }
