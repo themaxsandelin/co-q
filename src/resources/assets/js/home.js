@@ -84,10 +84,7 @@ function slugInput() {
 }
 
 function initiateCreateEvent() {
-  const title = eventTitle.value;
-  const slug = eventSlug.value;
   const description = document.getElementById('event-description').value;
-  const vibe  = selectedVibe;
   const password = document.getElementById('event-password').value;
 
   fetch('/create-event', {
@@ -97,10 +94,11 @@ function initiateCreateEvent() {
     },
     credentials: 'include',
     body: JSON.stringify({
-      title: title,
-      slug: slug,
+      title: eventTitle.value,
+      slug: eventSlug.value,
       description: description,
-      vibe: vibe,
+      vibe: selectedVibe,
+      vibeName: selectedVibeName,
       password: password
     })
   }).then((response) => response.json()).then((json) => {
@@ -116,16 +114,19 @@ function initiateCreateEvent() {
 }
 
 let selectedVibe;
+let selectedVibeName;
 function selectVibe() {
   const selected = document.querySelector('ul.vibe-list li.selected');
   if (selected) selected.classList.remove('selected');
 
   selectedVibe = vibes[this.innerText];
+  selectedVibeName = this.innerText;
   this.classList.add('selected');
 }
 
 function resetEventModal() {
   selectedVibe = null;
+  selectedVibeName = null;
   eventTitle.value = '';
   eventSlug.value = '';
   document.getElementById('event-description').value = '';

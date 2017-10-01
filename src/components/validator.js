@@ -44,6 +44,7 @@ function Validator() {
       if (!body.slug || !validateSlug(body.slug)) return reject('Please provide a slug that only contains letters and dashes.');
       if (!body.description) return reject('Please provide a description.');
       if (!body.vibe || !validateVibe(body.vibe)) return reject('Please provide a valid vibe.');
+      if (!body.vibeName) return reject('Please provide the name of the vibe.');
       resolve();
     });
   }
