@@ -154,13 +154,6 @@ app.get('/event/:slug', (req, res) => {
     .then((event) => {
 
       EventController.startEvent(event.id, req.user);
-      // UserController.getAccessTokens() //Should be replaced by getMultipleUserTokensById
-      //     .then((tokens) => {
-      //       SongSelector.getTopTracksForEvent(req, event, tokens)
-      //         .then((tracks) => console.log(tracks))
-      //         .catch((error) => console.log(error));
-      //       })
-      //   .catch((error) => console.log(error));
 
       res.render('event', {
         user: req.user,
