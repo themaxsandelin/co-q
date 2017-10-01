@@ -37,11 +37,16 @@ The ultimate music app for your event.
 7. Hack away! 🎉
 
 ### Hacking
-Co-Q uses Gulp to build all assets like `.js` and `.css` files, all of which are located in the `/src/resources/assets` folder.
-```bash
-$ gulp
-```
-This will run all tasks and start the watch task to listen on changes on all .js and .scss files.
+Co-Q uses Gulp to build all assets like `.js` and `.css` files, all of which are located in the `/src/resources/assets` folder. To get start hacking, do the following:
+1. Install Gulp globally.
+    ```bash
+    $ npm install -g gulp
+    ```
+2. Run Gulp
+    ```bash
+    $ gulp # Will run build with watch.
+      gulp build # Will only run build.
+    ```
 
 
 ## Contributors

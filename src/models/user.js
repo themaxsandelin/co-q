@@ -48,7 +48,7 @@ function User() {
 
   function updateUserInfo(user, spotifyAccount) {
     return new Promise((resolve, reject) => {
-      const author = (spotifyAccount.images.length) ? spotifyAccount.images[0].url:'';
+      const avatar = (spotifyAccount.images.length) ? spotifyAccount.images[0].url:'';
 
       admin.database().ref('users/' + user.uid).set({
         email: spotifyAccount.email,

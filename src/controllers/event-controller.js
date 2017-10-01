@@ -87,6 +87,7 @@ function EventController() {
 
           events.forEach((evt, i) => {
             evt.url = process.siteUrl + '/event/' + evt.slug;
+            evt.attendeeCount = (evt.attendees) ? (Object.keys(evt.attendees).length + 1):1;
             if (evt.author.uid === user.uid) {
               authorEvents.push(evt);
             } else {
