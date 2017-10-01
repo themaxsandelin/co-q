@@ -9,15 +9,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const moment = require('moment');
+const async = require('async');
 
 
 /**
 * Components
 */
 const Generator = require('./components/generator.js')();
-const FeatureExtractor = require('./components/feature-extractor.js')();
-const Formatter = require('./components/formatter.js')();
 const SongSelector = require('./components/song-selector.js')();
+// const Formatter = require('./components/formatter.js')();
 
 /**
 * Controllers
@@ -26,6 +26,23 @@ const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
 const VibesController = require('./controllers/vibes-controller.js')();
 const EventController = require('./controllers/event-controller.js')();
+
+/**
+* Helper method
+*/
+function compareMse(a,b) {
+  if (a[1] < b[1])
+    return -1;
+  if (a[1] > b[1])
+    return 1;
+  return 0;
+}
+
+/**
+* Constants
+*/
+const MAX_SEED = 5;
+const keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
 
 
 /**
@@ -135,17 +152,16 @@ app.post('/create-event', (req, res) => {
 app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
-    UserController.getAccessTokens()
-      .then((tokens) => {
-        SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {
-              //SongSelector.getMostRelevantTracks(tracks, event.vibe);
-              console.log(tracks);
-            })
-          .catch((error) => reject(error));
-      })
-    .catch((error) => console.log('OH SHIT'));
-      console.log(event.vibe)
+
+      EventController.startEvent(event.id, req.user);
+      // UserController.getAccessTokens() //Should be replaced by getMultipleUserTokensById
+      //     .then((tokens) => {
+      //       SongSelector.getTopTracksForEvent(req, event, tokens)
+      //         .then((tracks) => console.log(tracks))
+      //         .catch((error) => console.log(error));
+      //       })
+      //   .catch((error) => console.log(error));
+
       res.render('event', {
         user: req.user,
         event: event,

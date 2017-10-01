@@ -11,11 +11,25 @@ function User() {
     });
   }
 
-  function getById(uid) {
+  // function getById(uid) {
+  //   return new Promise((resolve, reject) => {
+  //     admin.auth().getUser(uid)
+  //       .then((userRecord) => resolve(userRecord.toJSON()))
+  //     .catch((error) => reject(error));
+  //   });
+  // }
+
+  function getAuthById(uid) {
     return new Promise((resolve, reject) => {
       admin.auth().getUser(uid)
         .then((userRecord) => resolve(userRecord.toJSON()))
       .catch((error) => reject(error));
+    });
+  }
+
+  function getById(uid) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('users/' + uid).once('value', (snapshot) => resolve(snapshot.val()));
     });
   }
 

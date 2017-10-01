@@ -1,5 +1,6 @@
 // Modules
 const moment = require('moment');
+const async = require('async');
 
 // Components
 const Generator = require('../components/generator.js')();
@@ -113,6 +114,25 @@ function UserController() {
     });
   }
 
+  function getMultipleUserTokensById(idList) {    
+    return new Promise((resolve, reject) => {
+      const accessTokens = [];
+      async.eachSeries(idList, (uid, callback) => {        
+        User.getById(uid)
+          .then((user) => {
+
+            accessTokens.push(user.spotify.accessToken);
+            callback();
+          })
+        .catch((error) => callback(error));
+      }, (error) => {
+        if (error) return reject(error);
+
+        resolve(accessTokens);
+      });
+    });
+  }
+
   return {
     ensureUserExists,
     createNewUserLogin,
@@ -120,7 +140,8 @@ function UserController() {
     authenticateUser,
     logoutUser,
     getAllUsers,
-    getAccessTokens
+    getAccessTokens,
+    getMultipleUserTokensById
   };
 }
 
