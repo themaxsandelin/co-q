@@ -14,7 +14,7 @@ const Formatter = require('../components/formatter.js')();
 const SpotifyController = require('../controllers/spotify-controller.js')();
 
 /**
-* Helper method
+* Helper methods
 */
 function compareMse(a,b) {
   if (a[1] < b[1])
@@ -22,6 +22,13 @@ function compareMse(a,b) {
   if (a[1] > b[1])
     return 1;
   return 0;
+}
+
+function uniq(a) {
+    var seen = {};
+    return a.filter(function(item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+    });
 }
 
 /**
@@ -72,8 +79,10 @@ function SongSelector() {
     return new Promise((resolve, reject) => {  
 
               getSongsForAllUsers(tokens)
-                .then((tracks) => {              
-                  // TODO: tracks.unique()
+                .then((tracks_) => {
+                  //Prevent duplicates if people have tracks in common
+                  tracks = uniq(tracks_)
+
                   //Extract auth 
                   auth = tokens[0];   
 
