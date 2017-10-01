@@ -4,6 +4,17 @@
 const request = require('request');
 
 /**
+* Components
+*/
+// const FeatureExtractor = require('../components/feature-extractor.js')();
+// const SongSelector = require('../components/song-selector.js')();
+
+/**
+* Controllers
+*/
+// const UserController = require('./user-controller.js')();
+
+/**
 * Extend Set
 */
 Set.prototype.union = function(setB) {
@@ -207,6 +218,7 @@ function SpotifyController() {
       });
     });
   }
+  
 
 
 

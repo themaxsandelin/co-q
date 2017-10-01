@@ -16,14 +16,13 @@ const async = require('async');
 * Components
 */
 const Generator = require('./components/generator.js')();
-const FeatureExtractor = require('./components/feature-extractor.js')();
-const Formatter = require('./components/formatter.js')();
 const SongSelector = require('./components/song-selector.js')();
+// const Formatter = require('./components/formatter.js')();
 
 /**
 * Controllers
 */
-const SpotifyController = require('./controllers/spotify-controller.js')();
+// const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
 const VibesController = require('./controllers/vibes-controller.js')();
 const EventController = require('./controllers/event-controller.js')();
@@ -176,64 +175,75 @@ app.post('/create-event', (req, res) => {
 app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
-    UserController.getAccessTokens()
-      .then((tokens_) => {
-        tokens = ['BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw','BQA0BLy7B0rzy7nZCBNtgaWDpNnoDhBAS_tGJrvLfvv6qT6no48IrKU91bMMyEJSTBiAOQomVMVGLCNwigsteY34tcJaB9v3tP9c_JcTyD4cF97VUhD5cM2JkCTr9r9MTlQyXNXGZqFGW5m8uZw']; //DEBUG      
-        SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {              
 
-              //Extract auth 
-              auth = req.user.spotify;              
-
-              SpotifyController.getMultipleSongInfosByIds(auth, tracks)
-                  .then((data) => {
-                    
-                    //Extract only the relevant features of each track (defined by $keys)
-                    var trackFeatures = [];                    
-                    data.audio_features.forEach((part) => {                      
-                      feature = Formatter.filterObjectToArray(part, keys);                      
-                      trackFeatures.push(feature)
-                    });
-
-                    //Sort the vibe correctly
-                    vibe = [];
-                    keys.forEach(function(key) {
-                      vibe.push(event.vibe[key]);
-                    });
-
-                    //Calculate MSE for each song and add tuples of songId and MSE in a list
-                    var mseAndSongs = [];
-                    for (var i=0; i<tracks.length; i++) {
-                      track = tracks[i];
-                      trackFeature = trackFeatures[i];
-                      var mse = FeatureExtractor.weightedMse(trackFeature, vibe);
-                      mseAndSongs.push([track, mse]);
-                    }
-
-                    //Sort in ascending order based on MSE
-                    mseAndSongs.sort(compareMse); 
-
-                    //Extract the best songs to use for seed
-                    bestSongs = []
-                    for (var i=0; i<MAX_SEED; i++) {
-                      bestSongs.push(mseAndSongs[i][0]);
-                    }
-
-
-                    SpotifyController.getSongsFromSeeds(auth,bestSongs)
-                        .then((data) => {
-                          var idsOfRecommendation = Formatter.trackIdsFromRecommendation(data);
-                          console.log(idsOfRecommendation);
-                        })
-                      .catch((error) => reject(error));
-
-                  })
-                .catch((error) => reject(error));
-
+      UserController.getAccessTokens() //Should be replaved by getMultipleUserTokensById
+          .then((tokens) => {
+            SongSelector.getTopTracksForEvent(req, event, tokens)
+              .then((tracks) => console.log(tracks))
+              .catch((error) => console.log(error));
             })
-          .catch((error) => reject(error));
-      })
-    .catch((error) => console.log('OH SHIT'));
+          .catch((error) => console.log(error));
+
+
+    // UserController.getAccessTokens() //Should be replaved by getMultipleUserTokensById
+    //   .then((tokens) => {
+    //     //tokens = ['BQBAqiWopo-OK0sY71akZpdLyyp3arHYH08nNj3eMtehtpBCsKny0CsSJ7KGurQbvuzjMRI4JeZDhMkxqu6kD61MyDBkMVpsxbuE5JTLqB1QzgLDTVMtPAuKTNGDu8XbGOpO4b5p-_NPn6vs1X8','BQBAqiWopo-OK0sY71akZpdLyyp3arHYH08nNj3eMtehtpBCsKny0CsSJ7KGurQbvuzjMRI4JeZDhMkxqu6kD61MyDBkMVpsxbuE5JTLqB1QzgLDTVMtPAuKTNGDu8XbGOpO4b5p-_NPn6vs1X8']; //DEBUG      
+    //     SongSelector.getSongsForAllUsers(tokens)
+    //         .then((tracks) => {              
+
+    //           //Extract auth 
+    //           auth = req.user.spotify;              
+
+    //           SpotifyController.getMultipleSongInfosByIds(auth, tracks)
+    //               .then((trackInfo) => {
+                    
+    //                 //Extract only the relevant features of each track (defined by $keys)
+    //                 var trackFeatures = [];                    
+    //                 trackInfo.audio_features.forEach((part) => {                      
+    //                   feature = Formatter.filterObjectToArray(part, keys);                      
+    //                   trackFeatures.push(feature)
+    //                 });
+
+    //                 //Sort the vibe correctly
+    //                 vibe = [];
+    //                 keys.forEach(function(key) {
+    //                   vibe.push(event.vibe[key]);
+    //                 });
+
+    //                 //Calculate MSE for each track and add tuples [trackId, MSE] in a list
+    //                 var mseAndSongs = [];
+    //                 for (var i=0; i<tracks.length; i++) {
+    //                   track = tracks[i];
+    //                   trackFeature = trackFeatures[i];
+    //                   var mse = FeatureExtractor.weightedMse(trackFeature, vibe);
+    //                   mseAndSongs.push([track, mse]);
+    //                 }
+
+    //                 //Sort in ascending order based on MSE
+    //                 mseAndSongs.sort(compareMse); 
+
+    //                 //Extract the best songs to use for seed
+    //                 bestSongs = []
+    //                 for (var i=0; i<MAX_SEED; i++) {
+    //                   bestSongs.push(mseAndSongs[i][0]);
+    //                 }
+
+
+    //                 SpotifyController.getSongsFromSeeds(auth,bestSongs)
+    //                     .then((data) => {
+    //                       var idsOfRecommendation = Formatter.trackIdsFromRecommendation(data);
+    //                       console.log(idsOfRecommendation);
+    //                     })
+    //                   .catch((error) => reject(error));
+
+    //               })
+    //             .catch((error) => reject(error));
+
+    //         })
+    //       .catch((error) => reject(error));
+    //   })
+    // .catch((error) => console.log('OH SHIT'));
+
       res.render('event', {
         user: req.user,
         event: event,
