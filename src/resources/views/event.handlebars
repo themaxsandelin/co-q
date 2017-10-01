@@ -15,6 +15,32 @@
   <div class="event-wrapper">
     <aside>
 
+      <div class="user-list-container">
+        <p class="head">Author</p>
+        <ul class="user-list">
+          <li>
+            <div class="avatar" style="background: url({{#if event.author.avatar }}{{ event.author.avatar }}{{ else }}/img/default.jpg{{/if}}) no-repeat center; background-size: cover;">
+              <div class="indicator"></div>
+            </div>
+            <p>{{ event.author.name }}</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="user-list-container margin">
+        <p class="head">Attendees</p>
+        <ul class="user-list">
+          {{#each event.attendees as |attendee i|}}
+            <li>
+              <div class="avatar" style="background: url({{#if attendee.avatar }}{{ attendee.avatar }}{{ else }}/img/default.jpg{{/if}}) no-repeat center; background-size: cover;">
+                <div class="indicator"></div>
+              </div>
+              <p>{{ attendee.name }}</p>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+
     </aside>
 
     <article>

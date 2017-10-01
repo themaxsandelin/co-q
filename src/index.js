@@ -153,12 +153,24 @@ app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
 
-      EventController.startEvent(event.id, req.user);
+      let noAuthorAttendees = event.attendees;
+      noAuthorAttendees.splice(noAuthorAttendees.indexOf(event.author.uid), 1);
 
-      res.render('event', {
-        user: req.user,
-        event: event,
-        eventJson: JSON.stringify(event)
+      UserController.getMultipleUsersById(noAuthorAttendees)
+        .then((attendees) => {
+          event.attendees = attendees;
+          // EventController.startEvent(event.id, req.user);
+
+          res.render('event', {
+            user: req.user,
+            event: event,
+            eventJson: JSON.stringify(event)
+          });
+
+        })
+      .catch((error) => {
+        console.log(error);
+        res.json({ error: error });
       });
     })
   .catch((error) => {

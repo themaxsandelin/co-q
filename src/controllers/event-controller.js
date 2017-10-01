@@ -36,7 +36,8 @@ function EventController() {
               const event = body;
               event.author = {
                 uid: user.uid,
-                name: user.name || user.username
+                name: user.name || user.username,
+                avatar: user.avatar || ''
               };
               if (body.password) {
                 body.salt = Generator.generateUniqueString(512);

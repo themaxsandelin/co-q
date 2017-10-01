@@ -145,6 +145,25 @@ function UserController() {
     });
   }
 
+  function getMultipleUsersById(idList) {
+    return new Promise((resolve, reject) => {
+      const users = [];
+      async.eachSeries(idList, (id, callback) => {
+        User.getById(id)
+          .then((user) => {
+            user.uid = id;
+            users.push(user);
+            callback();
+          })
+        .catch((error) => callback(error));
+      }, (error) => {
+        if (error) return reject(error);
+
+        resolve(users);
+      });
+    });
+  }
+
   return {
     ensureUserExists,
     createNewUserLogin,
@@ -153,7 +172,8 @@ function UserController() {
     logoutUser,
     getAllUsers,
     getAccessTokens,
-    getMultipleUserTokensById
+    getMultipleUserTokensById,
+    getMultipleUsersById
   };
 }
 
