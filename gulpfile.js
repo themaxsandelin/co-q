@@ -24,10 +24,16 @@ gulp.task('scss', () => {
     .pipe(gulp.dest('./public/css'));
 });
 
+gulp.task('img', () => {
+  return gulp.src('./src/resources/assets/img/*.jpg')
+    .pipe(gulp.dest('./public/img'));
+});
+
 gulp.task('watch', () => {
   gulp.watch('./src/resources/assets/js/**/*.js', ['js']);
   gulp.watch('./src/resources/assets/scss/**/*.scss', ['scss']);
+  gulp.watch('./src/resources/assets/img/*.jpg', ['img']);
 });
 
-gulp.task('build', ['js', 'scss']);
-gulp.task('default', ['js', 'scss', 'watch']);
+gulp.task('build', ['js', 'scss', 'img']);
+gulp.task('default', ['js', 'scss', 'img', 'watch']);
