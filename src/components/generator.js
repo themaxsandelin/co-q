@@ -6,7 +6,7 @@ function Generator() {
 
   function generateAuthorizationUrl() {
     const baseUrl = 'https://accounts.spotify.com/authorize';
-    const scope = 'user-read-private user-read-email user-top-read';
+    const scope = 'user-read-private user-read-email user-top-read user-read-birthdate streaming';
     let url = baseUrl;
     url += '?client_id=' + process.env.SPOTIFY_ID;
     url += '&response_type=code';
