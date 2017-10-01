@@ -19,6 +19,13 @@ Set.prototype.union = function(setB) {
 */
 const MAX_SEED_GENRES = 2;
 
+/**
+* Helper functions
+*/
+function getRandomInt(min, max) {
+  var rnd = Math.floor(Math.random() * (max - min + 1)) + min;  
+  return rnd
+}
 
 function SpotifyController() {
 
@@ -255,9 +262,14 @@ function SpotifyController() {
         var sortedGenres = [].concat.apply([], newGenreVec);
         var topGenres = [];
 
-        for(i=0; i<MAX_SEED_GENRES; i++){
-          topGenres.push(newGenreVec[i][0]);
-        }   
+        var randSet = new Set();
+        while (randSet.size < MAX_SEED_GENRES) {
+          var randInd = getRandomInt(0,10);
+          if (!randSet.has(randInd)) {        
+            randSet.add(randInd);
+            topGenres.push(newGenreVec[randInd][0]);
+          }
+        } 
 
         resolve(topGenres);
         })
