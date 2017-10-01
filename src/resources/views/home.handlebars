@@ -44,44 +44,73 @@
   </div>
 </div>
 
-<!-- <h2>Create new event</h2>
-<label for="event-title">Title: *</label>
-<br>
-<input type="text" id="event-title">
+<section class="modal-container" id="event-modal-container">
+  <div class="modal-wrapper" id="event-modal-wrapper">
+    <article class="modal" id="event-modal">
+      <div class="event-head">
+        <h2>Create event</h2>
+        <p>Choose a title, description, vibe and password (optional).</p>
+      </div>
 
-<br><br>
+      <div class="field-list">
+        <div class="field">
+          <label for="event-title">Title: <span>*</span></label>
+          <input type="text" id="event-title">
+        </div>
 
-<label for="event-slug">Url: *</label>
-<p style="font-size: 12px; color: #aaa; margin: 0;" id="slug-preview"></p>
-<br>
-<input type="text" id="event-slug">
+        <div class="field">
+          <label for="event-slug">Url slug: <span>*</span></label>
+          <input type="text" id="event-slug">
+        </div>
 
-<br><br>
+        <div class="field">
+          <label for="event-description">Description: <span>*</span></label>
+          <textarea id="event-description"></textarea>
+        </div>
 
-<label for="event-description">Description: *</label>
-<br>
-<textarea id="event-description" cols="60" rows="10"></textarea>
+        <div class="field vibes">
+          <label>Vibe: <span>*</span></label>
+          <ul class="vibe-list">
+            {{#each vibeNames as |vibe i|}}
+              <li>{{ vibe }}</li>
+            {{/each}}
+          </ul>
+        </div>
 
-<br><br>
+        <div class="field">
+          <label for="event-password">Password: (optional)</label>
+          <input type="password" id="event-password">
+        </div>
+      </div>
 
-<label for="event-vibe">Vibe: *</label>
-<br>
-<select id="event-vibe">
-  <option value="0" disabled selected>Choose vibe..</option>
-  {{#each vibeNames as |vibe i|}}
-    <option>{{ vibe }}</option>
-  {{/each}}
-</select>
+      <div class="button-wrapper">
+        <button id="cancel-create-event">Cancel</button>
+        <button class="primary" id="create-event">Create</button>
+      </div>
+    </article>
+  </div>
 
-<br><br>
-
-<label for="event-password">Password: (optional)</label>
-<br>
-<input type="password" id="event-password">
-
-<br><br>
-
-<button id="create-event">Create</button> -->
+  <div class="modal-wrapper feedback" id="event-feedback-wrapper">
+    <article class="modal" id="event-feedback-modal">
+      <div class="event-head">
+        <h2>Event created! 🎉</h2>
+        <p>Now all you have to do is to copy and send out the link below to all the people at the event. Have fun!</p>
+      </div>
+      <div class="field-list">
+        <div class="field">
+          <label for="event-url">Event url</label>
+          <input type="text" id="event-url" value="https://co-q.io/hello-world">
+        </div>
+      </div>
+      <div class="button-wrapper">
+        <a href="">
+          <button class="secondary">Go to event</button>
+        </a>
+        <button class="primary">Thanks!</button>
+      </div>
+    </article>
+  </div>
+</section>
 
 <script>var vibes = JSON.parse('{{{ vibes }}}');</script>
 <script src="/js/home.js"></script>
