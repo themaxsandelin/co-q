@@ -29,4 +29,5 @@ gulp.task('watch', () => {
   gulp.watch('./src/resources/assets/scss/**/*.scss', ['scss']);
 });
 
+gulp.task('build', ['js', 'scss']);
 gulp.task('default', ['js', 'scss', 'watch']);
