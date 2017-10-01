@@ -16,6 +16,12 @@ h2 {
   line-height: 32px;
 }
 
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 26px;
+}
+
 p {
   font-size: 14px;
   font-weight: 400;
@@ -207,6 +213,74 @@ header {
 
     &:last-of-type {
       margin: 0;
+    }
+  }
+}
+
+.event-list-wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .event-list {
+    width: 50%;
+    padding: 0 20px 0 0;
+    position: relative;
+    text-align: center;
+
+    &:nth-child(2n) {
+      padding: 0 0 0 20px;
+    }
+
+    ul.events {
+      li {
+        margin: 20px 0 0;
+
+        a {
+          width: 100%;
+          display: block;
+          background: #121212;
+          border: 1px solid #303030;
+          border-radius: 8px;
+          padding: 30px;
+          text-align: left;
+          text-decoration: none;
+          color: #fff;
+
+          transition: border-color 0.2s ease;
+
+          &:hover {
+            border-color: rgba(#1DB954, 0.5);
+          }
+        }
+
+        > p {
+          color: #CBCBCB;
+        }
+
+        .meta {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          margin: 5px 0 15px;
+
+          p {
+            font-size: 13px;
+            line-height: 16px;
+            color: #8D8D8D;
+            margin: 0 10px 0 0;
+
+            &:last-of-type {
+              margin: 0;
+            }
+
+            span {
+              font-weight: 500;
+              color: #fff;
+            }
+          }
+        }
+      }
     }
   }
 }
