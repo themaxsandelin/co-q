@@ -9,15 +9,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const moment = require('moment');
+const async = require('async');
 
 
 /**
 * Components
 */
 const Generator = require('./components/generator.js')();
-const FeatureExtractor = require('./components/feature-extractor.js')();
-const Formatter = require('./components/formatter.js')();
 const SongSelector = require('./components/song-selector.js')();
+// const Formatter = require('./components/formatter.js')();
 
 /**
 * Controllers
@@ -26,6 +26,23 @@ const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
 const VibesController = require('./controllers/vibes-controller.js')();
 const EventController = require('./controllers/event-controller.js')();
+
+/**
+* Helper method
+*/
+function compareMse(a,b) {
+  if (a[1] < b[1])
+    return -1;
+  if (a[1] > b[1])
+    return 1;
+  return 0;
+}
+
+/**
+* Constants
+*/
+const MAX_SEED = 5;
+const keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
 
 
 /**
@@ -121,30 +138,6 @@ app.get('/', (req, res) => {
   });
 });
 
-//DEBUG: Test to get song info from spotify and calculating its MSE
-// song_id = '2qvkySfQzsoOnV53YpL7SI';
-// auth_token = req.user.spotify.accessToken;
-// SpotifyController.getSongInfoById(auth_token, song_id)
-//     .then((songInfo) => {
-//       keys = [
-//         'danceability',
-//         'energy',
-//         'key',
-//         'loudness',
-//         'mode',
-//         'speechiness',
-//         'acousticness',
-//         'instrumentalness',
-//         'liveness',
-//         'valence',
-//         'tempo'];
-//       infoArray = Formatter.filterObjectToArray(songInfo, keys);
-//       x_target = [0.49, 0.88, 4.33, -5.23, 1.00, 0.05, 0.03, 0.37, 0.17, 0.31, 137.76];
-//       mse = FeatureExtractor.weightedMse(infoArray, x_target);
-//       console.log(mse);
-//     })
-//   .catch((error) => console.log('Oh Shit!'));
-
 app.post('/create-event', (req, res) => {
   EventController.createEvent(req.body, req.user)
     .then((event) => {
@@ -159,17 +152,15 @@ app.post('/create-event', (req, res) => {
 app.get('/event/:slug', (req, res) => {
   EventController.getEventBySlug(req.params.slug, req.user)
     .then((event) => {
-    UserController.getAccessTokens()
-      .then((tokens) => {
-        SongSelector.getSongsForAllUsers(tokens)
-            .then((tracks) => {
-              //SongSelector.getMostRelevantTracks(tracks, event.vibe);
-              console.log(tracks);
+
+      UserController.getAccessTokens() //Should be replaced by getMultipleUserTokensById
+          .then((tokens) => {
+            SongSelector.getTopTracksForEvent(req, event, tokens)
+              .then((tracks) => console.log(tracks))
+              .catch((error) => console.log(error));
             })
-          .catch((error) => reject(error));
-      })
-    .catch((error) => console.log('OH SHIT'));
-      console.log(event.vibe)
+        .catch((error) => console.log(error));
+
       res.render('event', {
         user: req.user,
         event: event,
