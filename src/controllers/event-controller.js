@@ -213,17 +213,17 @@ function EventController() {
 
               SpotifyController.getTopGenresForEvent(tokens)
                 .then((genres) => {
-                  console.log(genres),
+                  
                   SongSelector.getTopTracksForEvent(event, tokens)
                       .then((tracks) => {
-                        console.log(tracks)
+                        
                         SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
                           .then((recommendation) => {
 
                             recommendationTrackIds = []
                             recommendation.tracks.forEach((track) => recommendationTrackIds.push(track.id))
                             console.log(recommendationTrackIds)
-
+                            
                             resolve(recommendationTrackIds);
                           })
                           .catch((error) => reject(error))

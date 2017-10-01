@@ -18,6 +18,9 @@ Set.prototype.union = function(setB) {
 * Constants
 */
 const MAX_SEED_GENRES = 2;
+const NUM_SONGS_FROM_SEED = 10;
+const NUM_TOP_TRACKS = 50;
+const NUM_TOP_ARTIST = 50;
 
 /**
 * Helper functions
@@ -143,7 +146,7 @@ function SpotifyController() {
 
   function getUserTopGenres(auth) {  
     return new Promise((resolve, reject) => {
-      request('https://api.spotify.com/v1/me/top/artists?limit=3', {
+      request('https://api.spotify.com/v1/me/top/artists?limit='+NUM_TOP_ARTIST, {
         headers: {          
           'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'
@@ -173,7 +176,7 @@ function SpotifyController() {
     function getUserTopTrackIds(auth) {  
       
     return new Promise((resolve, reject) => {      
-      request('https://api.spotify.com/v1/me/top/tracks?limit=10', {
+      request('https://api.spotify.com/v1/me/top/tracks?limit='+NUM_TOP_TRACKS, {
         headers: {          
           'Authorization': 'Bearer ' + auth,
           'Accept': 'application/json'
@@ -202,8 +205,8 @@ function SpotifyController() {
       market = 'market=SE';
       seed = '&seed_tracks='+seedTracks.join();
       seed = seed + '&seed_genres=' + seedGenres.join();
-      limit = '&limit=20'
-      req_url = baseUrl + market + seed + limit 
+      limit = '&limit=' + NUM_SONGS_FROM_SEED;
+      req_url = baseUrl + market + seed + limit;
          
       request(req_url, {
         headers: {          
