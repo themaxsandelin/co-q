@@ -217,7 +217,7 @@ function EventController() {
                         SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
                           .then((recommendation) => {
 
-                            recommendationTrackIds = []
+                            recommendationTrackIds = [];
                             recommendation.tracks.forEach((track) => recommendationTrackIds.push('spotify:track:' + track.id))
                             resolve(recommendationTrackIds);
                           })
