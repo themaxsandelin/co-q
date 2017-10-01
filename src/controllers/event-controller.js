@@ -151,6 +151,14 @@ function EventController() {
           if (!event) return reject('Event not found.');
 
           if (body.password && event.password && !verifyPassword(body.password, event.password, event.salt)) return reject('Incorrect event password.');
+          const attendeesObj = event.attendees;
+          event.attendees = [];
+          if (attendeesObj) {
+            Object.keys(attendeesObj).forEach((id) => {
+              event.attendees.push(attendeesObj[id]);
+            });
+          }
+          if (event.attendees.indexOf(user.uid) > -1) return reject('You are already attending at this event.');
 
           Event.signupUser(body.eventId, user.uid)
             .then(() => resolve())
