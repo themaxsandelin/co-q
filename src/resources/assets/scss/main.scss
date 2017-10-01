@@ -280,6 +280,11 @@ header {
   flex-wrap: wrap;
   justify-content: space-between;
 
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+
   h2 {
     line-height: 50px;
   }
@@ -369,6 +374,11 @@ header {
     padding: 0 20px 0 0;
     position: relative;
     text-align: center;
+
+    > p {
+      color: #CBCBCB;
+      margin: 20px 0 0;
+    }
 
     &:nth-child(2n) {
       padding: 0 0 0 20px;

@@ -14,18 +14,22 @@
   <body>
     <section class="main">
         {{#if user}}
+
           <article class="wrapper">
             <header>
-              <h2>Co-Q</h2>
+              <a href="/">
+                <h2>Co-Q</h2>
+              </a>
 
               <div class="user-area">
                 <div class="info">
-                  <p>{{ user.name }}</p>
+                  <p>{{#if user.name }}{{ user.name }}{{ else }}{{ user.username }}{{/if}}</p>
                   <a href="/logout">Log out</a>
                 </div>
-                <div class="avatar" style="background: url({{#if user.avatar}}{{ user.avatar }}{{ else }}{{ user.username }}{{/if}}) no-repeat center; background-size: cover;"></div>
+                <div class="avatar" style="background: url({{ user.avatar }}) no-repeat center; background-size: cover;"></div>
               </div>
             </header>
+
         {{/if}}
 
         {{{ body }}}

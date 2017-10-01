@@ -46,11 +46,13 @@ function User() {
       admin.auth().createUser({ email: spotifyAccount.email, displayName: spotifyAccount.displayName })
         .then((userRecord) => {
           const user = userRecord.toJSON();
+          const avatar = (spotifyAccount.images.length) ? spotifyAccount.images[0].url:'';
+
           admin.database().ref('users/' + user.uid).set({
             email: spotifyAccount.email,
             username: spotifyAccount.id,
             name: spotifyAccount.display_name,
-            avatar: spotifyAccount.images[0].url,
+            avatar: avatar,
             authTokens: []
           });
 
