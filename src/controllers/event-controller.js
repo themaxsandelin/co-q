@@ -203,8 +203,12 @@ function EventController() {
                         console.log(tracks)
                         SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
                           .then((recommendation) => {
-                            console.log(recommendation);
-                            resolve(recommendation);
+                            
+                            recommendationTrackIds = []
+                            recommendation.tracks.forEach((track) => recommendationTrackIds.push(track.id))
+                            console.log(recommendationTrackIds)
+
+                            resolve(recommendationTrackIds);
                           })
                           .catch((error) => reject(error))
                       })
