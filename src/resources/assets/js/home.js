@@ -207,7 +207,16 @@ function showCreationFeedback(event) {
 }
 
 function pushEventToList(event) {
-  const list = document.getElementById('author-events');
+  const wrapper = document.getElementById('author-list');
+  let list = document.getElementById('author-events');
+
+  if (!list) {
+    wrapper.removeChild(wrapper.querySelector('p'));
+    list = document.createElement('ul');
+    list.classList.add('events');
+    list.id = 'author-events';
+    wrapper.appendChild(list);
+  }
 
   const item = document.createElement('li');
   const link = document.createElement('a');

@@ -7,27 +7,32 @@
 </div>
 
 <div class="event-list-wrapper">
-  <div class="event-list">
+  <div class="event-list" id="author-list">
     <h2>Your events</h2>
-    <ul class="events" id="author-events">
-      {{#each authorEvents as |event i|}}
-        <li>
-          <a href="{{ event.url }}">
-            <h3>{{ event.title }}</h3>
-            <div class="meta">
-              <p>Author: <span>{{ event.author.name }}</span></p>
-              <p>Attendees: <span>{{ event.attendeeCount }}</span></p>
-            </div>
-            <p>{{ event.description }}</p>
-          </a>
-        </li>
-      {{/each}}
-    </ul>
+    {{#if authorEvents }}
+      <ul class="events" id="author-events">
+        {{#each authorEvents as |event i|}}
+          <li>
+            <a href="{{ event.url }}">
+              <h3>{{ event.title }}</h3>
+              <div class="meta">
+                <p>Author: <span>{{ event.author.name }}</span></p>
+                <p>Attendees: <span>{{ event.attendeeCount }}</span></p>
+              </div>
+              <p>{{ event.description }}</p>
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+    {{ else }}
+      <p>You haven't created any events yet.</p>
+    {{/if}}
   </div>
 
   <div class="event-list">
     <h2>Events you are attending</h2>
-    <ul class="events">
+    {{#if attendingEvents}}
+      <ul class="events">
       {{#each attendingEvents as |event i|}}
         <li>
           <a href="{{ event.url }}">
@@ -40,7 +45,10 @@
           </a>
         </li>
       {{/each}}
-    </ul>
+      </ul>
+    {{ else }}
+      <p>You are currently not attending any events</p>
+    {{/if}}
   </div>
 </div>
 
