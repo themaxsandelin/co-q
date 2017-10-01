@@ -114,15 +114,27 @@ function UserController() {
     });
   }
 
-  function getMultipleUserTokensById(idList) {    
+  function getMultipleUserTokensById(idList) {
     return new Promise((resolve, reject) => {
       const accessTokens = [];
-      async.eachSeries(idList, (uid, callback) => {        
+      async.eachSeries(idList, (uid, callback) => {
         User.getById(uid)
           .then((user) => {
 
-            accessTokens.push(user.spotify.accessToken);
-            callback();
+            const now = parseInt(moment().format('X'));
+            if (user.spotify.expires <= now) {
+              SpotifyController.refreshAccessToken(user.spotify.refreshToken)
+                .then((auth) => updateSpotifyAuth(user, auth))
+                .then((auth) => {
+                  user.spotify = auth;
+                  accessTokens.push(user.spotify.accessToken);
+                  callback();
+                })
+              .catch((error) => callback(error));
+            } else {
+              accessTokens.push(user.spotify.accessToken);
+              callback();
+            }
           })
         .catch((error) => callback(error));
       }, (error) => {
