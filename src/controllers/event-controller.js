@@ -204,11 +204,12 @@ function EventController() {
                         SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
                           .then((recommendation) => {
                             console.log(recommendation);
+                            resolve(recommendation);
                           })
                           .catch((error) => reject(error))
                       })
                     .catch((error) => reject('getTopTracksForEvent failed'));
-                  resolve('Hej');}) 
+                  }) 
                 .catch((error) => reject('getTopGenresForEvent'));
             })                            
 
