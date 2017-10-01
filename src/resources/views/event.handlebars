@@ -35,7 +35,7 @@
               <div class="avatar" style="background: url({{#if attendee.avatar }}{{ attendee.avatar }}{{ else }}/img/default.jpg{{/if}}) no-repeat center; background-size: cover;">
                 <div class="indicator"></div>
               </div>
-              <p>{{ attendee.name }}</p>
+              <p>{{#if attendee.name }}{{ attendee.name }}{{ else }}{{ attendee.username }}{{/if}}</p>
             </li>
           {{/each}}
         </ul>

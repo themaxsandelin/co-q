@@ -154,7 +154,7 @@ app.get('/event/:slug', (req, res) => {
     .then((event) => {
 
       let noAuthorAttendees = event.attendees;
-      noAuthorAttendees.splice(noAuthorAttendees.indexOf(event.author.uid), 1);
+      if (noAuthorAttendees.indexOf(event.author.uid) > -1) noAuthorAttendees.splice(noAuthorAttendees.indexOf(event.author.uid), 1);
 
       UserController.getMultipleUsersById(noAuthorAttendees)
         .then((attendees) => {
