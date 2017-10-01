@@ -48,8 +48,13 @@ if (eventSlug) eventSlug.addEventListener('input', slugInput);
 const slugPreview = document.getElementById('slug-preview');
 updateSlugPreview();
 
+const closeEventButton = document.getElementById('close-event-feedback');
+if (closeEventButton) closeEventButton.addEventListener('click', toggleEventModal);
+
 function generateSlugFromTitle(title) {
-  title = title.replace(' ', '-');
+  while (title.indexOf(' ') > -1) {
+    title = title.replace(' ', '-');
+  }
   title = title.replace(/[^0-9a-z-]/gi, '');
   title = title.toLowerCase();
   return title;
@@ -79,32 +84,35 @@ function slugInput() {
 }
 
 function initiateCreateEvent() {
-  showCreationFeedback();
+  const title = eventTitle.value;
+  const slug = eventSlug.value;
+  const description = document.getElementById('event-description').value;
+  const vibe  = selectedVibe;
+  const password = document.getElementById('event-password').value;
 
-  // const title = eventTitle.value;
-  // const slug = eventSlug.value;
-  // const description = document.getElementById('event-description').value;
-  // const vibe  = selectedVibe;
-  // const password = document.getElementById('event-password').value;
-  //
-  // fetch('/create-event', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   credentials: 'include',
-  //   body: JSON.stringify({
-  //     title: title,
-  //     slug: slug,
-  //     description: description,
-  //     vibe: vibe,
-  //     password: password
-  //   })
-  // }).then((response) => response.json()).then((json) => {
-  //   console.log(json);
-  // }).catch((error) => {
-  //   console.log('Fetch error: ' + error);
-  // });
+  fetch('/create-event', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      title: title,
+      slug: slug,
+      description: description,
+      vibe: vibe,
+      password: password
+    })
+  }).then((response) => response.json()).then((json) => {
+    if (json.error) {
+      console.log(json.error);
+      return alert(json.error);
+    }
+
+    showCreationFeedback(json);
+  }).catch((error) => {
+    console.log('Fetch error: ' + error);
+  });
 }
 
 let selectedVibe;
@@ -139,7 +147,6 @@ function toggleEventModal() {
     eventModal.classList.remove('hide');
     eventModalContainer.classList.remove('show');
     eventModalContainer.classList.add('forceModal');
-    console.log('Fuck you.');
     setTimeout(() => {
       eventFeedbackWrapper.classList.remove('display');
       eventModalContainer.classList.remove('display');
@@ -180,10 +187,13 @@ function toggleEventModal() {
   }
 }
 
-
-function showCreationFeedback() {
+function showCreationFeedback(event) {
   eventModalAnimating = true;
   eventFeedbackVisible = true;
+
+  document.getElementById('event-url').value = event.url;
+  document.getElementById('event-button-link').href = event.url;
+  pushEventToList(event);
 
   eventFeedbackWrapper.classList.add('display');
   setTimeout(() => {
@@ -193,4 +203,35 @@ function showCreationFeedback() {
       eventModalAnimating = false;
     }, 400);
   }, 20);
+}
+
+function pushEventToList(event) {
+  const list = document.getElementById('author-events');
+
+  const item = document.createElement('li');
+  const link = document.createElement('a');
+  link.href = event.url;
+  item.appendChild(link);
+
+  const title = document.createElement('h3');
+  title.innerText = event.title;
+  link.appendChild(title);
+
+  const meta = document.createElement('div');
+  meta.classList.add('meta');
+  link.appendChild(meta);
+
+  const author = document.createElement('p');
+  author.innerHTML = 'Author: <span>' + event.author.name + '</span>';
+  meta.appendChild(author);
+
+  const attendees = document.createElement('p') ;
+  attendees.innerHTML = 'Attendees: <span>' + event.attendeeCount + '</span>';
+  meta.appendChild(attendees);
+
+  const description = document.createElement('p');
+  description.innerText = event.description;
+  link.appendChild(description);
+
+  list.appendChild(item);
 }

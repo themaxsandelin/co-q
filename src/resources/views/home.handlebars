@@ -9,7 +9,7 @@
 <div class="event-list-wrapper">
   <div class="event-list">
     <h2>Your events</h2>
-    <ul class="events">
+    <ul class="events" id="author-events">
       {{#each authorEvents as |event i|}}
         <li>
           <a href="{{ event.url }}">
@@ -99,14 +99,14 @@
       <div class="field-list">
         <div class="field">
           <label for="event-url">Event url</label>
-          <input type="text" id="event-url" value="https://co-q.io/hello-world">
+          <input type="text" id="event-url">
         </div>
       </div>
       <div class="button-wrapper">
-        <a href="">
+        <a href="" id="event-button-link">
           <button class="secondary">Go to event</button>
         </a>
-        <button class="primary">Thanks!</button>
+        <button class="primary" id="close-event-feedback">Thanks!</button>
       </div>
     </article>
   </div>

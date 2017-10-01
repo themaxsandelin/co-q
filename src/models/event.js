@@ -8,8 +8,8 @@ function Event() {
 
   function create(event, uid) {
     return new Promise((resolve, reject) => {
-      admin.database().ref('events').push(event);
-      resolve();
+      const evt = admin.database().ref('events').push(event);
+      resolve(evt.key);
     });
   }
 
