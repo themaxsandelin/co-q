@@ -139,7 +139,7 @@ function SpotifyController() {
       }, (error, response, body) => { 
 
         if (error) return reject(error);
-
+        console.log(body)
         const data = JSON.parse(body);
 
         if (data.error) return reject(data.error);
@@ -208,7 +208,53 @@ function SpotifyController() {
     });
   }
   
+  function getMultipleUserTopGenres(tokens) {
+    return new Promise((resolve, reject) => {
+      let genres = [];
+      async.eachSeries(tokens, (token, callback) => {
+        getUserTopGenres(token)
+          .then((userGenres) => {
+            genres = genres.concat(userGenres);
+            callback();
+          })
+        .catch((error) => callback());
+      }, (error) => {
+        if (error) return reject(error);
 
+        resolve(genres);
+      });
+    });
+  }
+
+  function getTopGenresForEvent(tokens) {
+    console.log('Kalle5')
+    return new Promise((resolve, reject) => {
+      getUserTopGenres(tokens)
+        .then((genrePerUser) => {
+          console.log('Kalle6')
+        var genresVec = [];
+        genrePerUser.forEach((g) => genresVec.push(g));
+        console.log('Kalle4')
+        var genreCount = {};
+        genresVec.map( function (a) { if (a in genreCount) genreCount[a] ++; else genreCount[a] = 1; } );
+        var newGenreVec = [];
+        console.log('Kalle3')
+        for(a in genreCount){
+          newGenreVec.push([a,genreCount[a]])
+        }
+        newGenreVec.sort(function(a,b){return a[1] - b[1]});
+        newGenreVec.reverse();
+        var sortedGenres = [].concat.apply([], newGenreVec);
+        var topGenres = [];
+
+        for(i=0; i<5; i++){
+          topGenres.push(newGenreVec[i][0]);
+        }
+        resolve(topGenres);
+        })
+      .catch((error) => reject(error));
+    });
+  }
 
 
   return {
@@ -219,7 +265,9 @@ function SpotifyController() {
     getUserTopGenres,
     getUserTopTrackIds,
     getMultipleSongInfosByIds,
-    getSongsFromSeeds
+    getSongsFromSeeds,
+    getMultipleUserTopGenres,
+    getTopGenresForEvent
   };
 }
 

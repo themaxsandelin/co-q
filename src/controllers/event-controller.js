@@ -5,6 +5,12 @@ const crypto = require('crypto');
 const Validator = require('../components/validator.js')();
 const Generator = require('../components/generator.js')();
 
+/**
+* Controllers
+*/
+const SpotifyController = require('./spotify-controller.js')();
+const UserController = require('./user-controller.js')();
+
 // Models
 const Event = require('../models/event.js')();
 
@@ -168,13 +174,51 @@ function EventController() {
     });
   }
 
+  function startEvent(eventId, user) {
+    return new Promise((resolve, reject) => {
+      // console.log(eventId)
+      // console.log(user)
+      if (!eventId) return reject('Missing eventId parameter');
+      
+      Event.getById(eventId)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          const attendeesObj = event.attendees;
+          event.attendees = [];
+          if (attendeesObj) {
+            Object.keys(attendeesObj).forEach((id) => {
+              event.attendees.push(attendeesObj[id]);
+            });
+          }
+          var genreVec = [];
+          UserController.getMultipleUserTokensById(event.attendees)
+            .then((tokens) => {
+              console.log('Kalle')
+              SpotifyController.getTopGenresForEvent(tokens)
+              console.log('Kalle')
+            })  
+            .then((genres) => {
+              console.log('Hej');
+              console.log(genres);
+              resolve('Hej');
+
+            })
+          .catch((error) => reject(error));
+        })
+      .catch((error) => reject(error));
+
+    });
+  }
+
   return {
     createEvent,
     getAllEventSlugs,
     getAllUserSpecificEvents,
     getEventBySlug,
     singupUserForEvent,
-    removeEventAttendee
+    removeEventAttendee,
+    startEvent
   };
 }
 
