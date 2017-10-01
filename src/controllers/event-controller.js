@@ -196,6 +196,7 @@ function EventController() {
               event.attendees.push(attendeesObj[id]);
             });
           }
+          event.attendees.push(event.author.uid);
           var genreVec = [];
           UserController.getMultipleUserTokensById(event.attendees)
             .then((tokens) => {
