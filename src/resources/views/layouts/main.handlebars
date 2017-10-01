@@ -2,13 +2,41 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>CO-Q</title>
+    <title>Co-Q - The ultimate music app for your event.</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
 
     <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/main.css">
 
     <script>window._sharedData={};</script>
   </head>
   <body>
-    {{{ body }}}
+    <section class="main">
+        {{#if user}}
+          <article class="wrapper">
+            <header>
+              <h2>Co-Q</h2>
+
+              <div class="user-area">
+                <div class="info">
+                  <p>Max Sandelin</p>
+                  <a href="/logout">Logga ut</a>
+                </div>
+                <div class="avatar" style="background: url({{ user.avatar }}) no-repeat center; background-size: cover;"></div>
+              </div>
+            </header>
+        {{/if}}
+
+        {{{ body }}}
+
+        {{#if user}}
+          </article>
+        {{/if}}
+    </section>
+
+    {{#each scripts as |script i|}}
+    <script src="/js/{{ script }}.js"></script>
+    {{/each}}
   </body>
 </html>

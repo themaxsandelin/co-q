@@ -17,6 +17,7 @@ function UserController() {
   function ensureUserExists(spotifyAccount) {
     return new Promise((resolve, reject) => {
       User.getByEmail(spotifyAccount.email)
+        .then((user) => User.updateUserInfo(user, spotifyAccount))
         .then((user) => resolve(user))
       .catch((error) => {
         if (error.code !== 'auth/user-not-found') return reject(error);

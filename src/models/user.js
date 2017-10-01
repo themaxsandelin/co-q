@@ -36,12 +36,25 @@ function User() {
             email: spotifyAccount.email,
             username: spotifyAccount.id,
             name: spotifyAccount.display_name,
+            avatar: spotifyAccount.images[0].url,
             authTokens: []
           });
 
           resolve(user);
         })
       .catch((error) => reject(error));
+    });
+  }
+
+  function updateUserInfo(user, spotifyAccount) {
+    return new Promise((resolve, reject) => {
+      admin.database().ref('users/' + user.uid).set({
+        email: spotifyAccount.email,
+        username: spotifyAccount.id,
+        name: spotifyAccount.display_name,
+        avatar: spotifyAccount.images[0].url
+      });
+      resolve(user);
     });
   }
 
@@ -101,6 +114,7 @@ function User() {
     getById,
     getAll,
     create,
+    updateUserInfo,
     addAuthToken,
     setSpotifyAuth,
     authenticate,
