@@ -30,6 +30,31 @@ function Socket(server) {
     }
   }
 
+  function sendConnectedUsersToConnection(connections, connection) {
+    const users = [];
+    if (connections.author) {
+      Object.keys(connections.author).forEach((id) => {
+        users.push({
+          uid: connections.author[id].user.uid,
+          name: connections.author[id].name || connections.author[id].username
+        });
+      });
+    }
+    if (connections.attendees) {
+      Object.keys(connections.attendees).forEach((id) => {
+        users.push({
+          uid: connections.attendees[id].user.uid,
+          name: connections.attendees[id].name || connections.attendees[id].username
+        });
+      });
+    }
+
+    connection.sendUTF(JSON.stringify({
+      update: 'all-users-connected',
+      users: users
+    }));
+  }
+
   wsServer.on('request', (request) => {
     if (!validateSocketOrigin(request)) return request.reject();
 
@@ -88,13 +113,12 @@ function Socket(server) {
                 name: connection.user.name || connection.user.username
               }
             });
-
             if (connection.isEventAuthor) {
               connections[connection.eventId].author[connection.id] = connection;
             } else {
               connections[connection.eventId].attendees[connection.id] = connection;
             }
-            // console.log(connections);
+            sendConnectedUsersToConnection(connections[connection.eventId], connection);
 
             connection.on('close', (reasonCode, description) => {
               // console.log('Connection ' + connection.id + ' closed.');

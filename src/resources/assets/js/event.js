@@ -10,17 +10,21 @@ socket.addEventListener('message', (e) => {
   console.log(message);
 
   if (message.update === 'user-connected' || message.update === 'user-disconnected') {
-    updateUserConnection(message.update, message.user);
+    updateUsersConnected(message.update, [message.user]);
+  } else if (message.update === 'all-users-connected') {
+    updateUsersConnected(message.update, message.users);
   }
 });
 
-function updateUserConnection(update, user) {
-  const userNode = document.querySelector('ul.user-list li[data-user=' + user.uid + ']');
-  if (update === 'user-connected') {
-    userNode.classList.add('connected');
-  } else {
-    userNode.classList.remove('connected');
-  }
+function updateUsersConnected(update, users) {
+  users.forEach((user) => {
+    const userNode = document.querySelector('ul.user-list li[data-user=' + user.uid + ']');
+    if (update === 'user-connected' || update === 'all-users-connected') {
+      userNode.classList.add('connected');
+    } else {
+      userNode.classList.remove('connected');
+    }
+  });
 }
 
 const eventPassword = document.getElementById('event-password');
