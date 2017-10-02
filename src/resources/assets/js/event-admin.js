@@ -4,6 +4,8 @@ if (startButton) startButton.addEventListener('click', startEvent);
 let player;
 let playerState;
 let progressChecker;
+let tracks;
+let playingIndex;
 
 const artwork = document.getElementById('artwork');
 const trackName = document.getElementById('track-name');
@@ -11,6 +13,7 @@ const artist = document.getElementById('artist');
 const progress = document.getElementById('progress');
 const duration = document.getElementById('duration');
 const marker = document.getElementById('marker');
+const tableBody = document.querySelector('#player-queue tbody');
 
 const prev = document.getElementById('prev');
 prev.addEventListener('click', previousSong);
@@ -29,19 +32,22 @@ function startEvent() {
     },
     credentials: 'include',
     body: JSON.stringify({ eventId: eventId })
-  }).then((response) => response.json()).then((json) => {
-    if (json.error) return alert(json.error);
+  }).then((response) => response.json()).then((results) => {
+    if (results.error) return alert(results.error);
+    tracks = results;
 
-    playSongArray(json)
+    playSongArray(tracks.map((song) => 'spotify:track:' + song.id))
       .then(() => {
-        console.log('Playing! :D');
+        playingIndex = 0;
+        selectTrackRow();
+        console.log('Song playing.');
       })
     .catch((error) => {
       console.log('Failed to play songs.');
       console.log(erorr);
     });
 
-    getTracksInfo(json);
+    appendMultipleTracks(tracks);
   }).catch((error) => {
     console.log('Fetch error: ' + error);
   });
@@ -189,8 +195,15 @@ function previousSong() {
       return reject('Something went wrong while switch playback device.');
     }
 
+    if (playingIndex) {
+      playingIndex--;
+      selectTrackRow();
+    }
     console.log('Previos song!');
-  }).catch((error) => reject(error));
+  }).catch((error) => {
+    console.log('Previous song error:');
+    console.log(error);
+  });
 }
 
 
@@ -226,29 +239,30 @@ function nextSong() {
       return reject('Something went wrong while switch playback device.');
     }
 
-    console.log('Previos song!');
-  }).catch((error) => reject(error));
+    playingIndex++;
+    selectTrackRow();
+    console.log('Next song!');
+  }).catch((error) => {
+    console.log('Next song error: ');
+    console.log(error);
+  });
 }
 
-function getTracksInfo(trackIds) {
-  trackIds.forEach((uids) => {
-    const id = uids.replace('spotify:track:', '');
-
-    fetch('https://api.spotify.com/v1/tracks/' + id, {
-      headers: {
-        'Authorization': 'Bearer ' + spotifyAuth.accessToken
-      }
-    }).then((response) => response.json()).then((json) => {
-      appendTrack(json);
-    }).catch((error) => {
-      console.log(error);
-    });
+function appendMultipleTracks(tracks) {
+  tracks.forEach((track) => {
+    appendTrack(track);
   });
 }
 
 function appendTrack(track) {
-  const body = document.querySelector('#player-queue tbody');
+  tableBody.append(buildTrack(track));
+}
 
+function prependTrack(track) {
+  tableBody.insertBefore(buildTrack(track), tableBody.childNodes[0]);
+}
+
+function buildTrack(track) {
   const row = document.createElement('tr');
   const name = document.createElement('td');
   name.innerText = track.name;
@@ -267,5 +281,13 @@ function appendTrack(track) {
   duration.innerText = formatTimeFromMs(track.duration_ms);
   row.appendChild(duration);
 
-  body.append(row);
+  return row;
+}
+
+function selectTrackRow() {
+  const rows = tableBody.querySelectorAll('tr');
+  const selected = tableBody.querySelector('tr.selected');
+  if (selected) selected.classList.remove('selected');
+
+  rows[playingIndex].classList.add('selected');
 }

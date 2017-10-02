@@ -682,7 +682,7 @@ section.modal-container {
     background: #0C0C0C;
     border: 1px solid #303030;
     border-radius: 8px 0 0 8px;
-    padding: 40px;
+    padding: 20px;
 
     .artwork {
       width: 100%;
@@ -843,6 +843,11 @@ table.player-queue {
         td:last-of-type {
           border-bottom-right-radius: 8px;
         }
+      }
+
+      &.selected td {
+        background: #0C0C0C;
+        color: #1DB954;
       }
 
       td {

@@ -1,5 +1,6 @@
 // Modules
 const crypto = require('crypto');
+const async = require('async');
 
 // Components
 const Validator = require('../components/validator.js')();
@@ -214,21 +215,16 @@ function EventController() {
                 .then((genres) => {
                   SongSelector.getTopTracksForEvent(event, tokens)
                       .then((tracks) => {
-                        SpotifyController.getSongsFromSeeds(tokens[0], tracks, genres)
-                          .then((recommendation) => {
-
-                            recommendationTrackIds = [];
-                            recommendation.tracks.forEach((track) => recommendationTrackIds.push('spotify:track:' + track.id))
-                            resolve(recommendationTrackIds);
-                          })
-                          .catch((error) => reject(error))
+                        SpotifyController.getSongsFromSeeds(user.spotify.accessToken, tracks, genres)
+                          .then((recommendation) => resolve(recommendation.tracks))
+                        .catch((error) => reject(error))
                       })
-                    .catch((error) => reject('getTopTracksForEvent failed'));
+                    .catch((error) => reject(error));
                   })
-                .catch((error) => reject('getTopGenresForEvent'));
+                .catch((error) => reject(error));
             })
 
-          .catch((error) => reject('getMultipleUserTokensById'));
+          .catch((error) => reject(error));
         })
       .catch((error) => reject(error));
 

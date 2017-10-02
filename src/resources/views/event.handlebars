@@ -2,6 +2,7 @@
   <div class="page-head">
     <h1>{{ event.title }}</h1>
     <p>{{ event.description }}</p>
+    <p>Vibe: {{ event.vibeName }}</p>
     <div class="button-wrapper">
       {{#if event.isAuthor }}
         <button class="primary" id="start-event">Start event</button>
