@@ -642,6 +642,10 @@ section.modal-container {
         border-radius: 0 0 8px 8px;
       }
 
+      &.connected .avatar .indicator {
+        background: #1DB954;
+      }
+
       .avatar {
         width: 40px;
         height: 40px;
@@ -656,6 +660,7 @@ section.modal-container {
           top: -2px;
           right: -2px;
           background: #3E3E3E;
+          border: 2px solid #121212;
         }
       }
 

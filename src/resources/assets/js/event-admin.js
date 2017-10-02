@@ -75,14 +75,15 @@ function onSpotifyPlayerAPIReady() {
   });
 
   player.on('ready', (data) => {
-    transferPlayback(data.device_id)
-      .then(() => {
-        console.log('Play songs!');
-      })
-    .catch((error) => {
-      console.log('Playback transfer error.');
-      console.log(error);
-    });
+    console.log('Player ready!');
+    // transferPlayback(data.device_id)
+    //   .then(() => {
+    //     console.log('Play songs!');
+    //   })
+    // .catch((error) => {
+    //   console.log('Playback transfer error.');
+    //   console.log(error);
+    // });
   });
 }
 

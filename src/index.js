@@ -1,6 +1,5 @@
-/**
-* Modules
-*/
+// Modules
+const http = require('http');
 const express = require('express');
 const exphbs  = require('express-handlebars');
 const request = require('request');
@@ -12,43 +11,23 @@ const moment = require('moment');
 const async = require('async');
 
 
-/**
-* Components
-*/
+// Components
 const Generator = require('./components/generator.js')();
 const SongSelector = require('./components/song-selector.js')();
-// const Formatter = require('./components/formatter.js')();
 
-/**
-* Controllers
-*/
+// Controllers
 const SpotifyController = require('./controllers/spotify-controller.js')();
 const UserController = require('./controllers/user-controller.js')();
 const VibesController = require('./controllers/vibes-controller.js')();
 const EventController = require('./controllers/event-controller.js')();
 
-/**
-* Helper method
-*/
-function compareMse(a,b) {
-  if (a[1] < b[1])
-    return -1;
-  if (a[1] > b[1])
-    return 1;
-  return 0;
-}
-
-/**
-* Constants
-*/
-const MAX_SEED = 5;
-const keys = ['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'];
-
-
-/**
-* Express setup
-*/
+// Server setup
 const app = express();
+const server = http.createServer(app).listen(8888);
+const socket = require('./components/socket.js')(server);
+console.log('Co-Q up and running!');
+
+// View engine setup
 app.set('view engine', 'handlebars');
 app.set('views', './src/resources/views');
 app.engine('handlebars', exphbs({
@@ -56,6 +35,7 @@ app.engine('handlebars', exphbs({
   layoutsDir: './src/resources/views/layouts'
 }));
 
+// Server setup
 app.use(bodyParser.json({ extended: true }));
 app.use(cookieParser());
 app.use(helmet());
@@ -77,7 +57,6 @@ app.use((req, res, next) => {
 
   UserController.authenticateUser(req.cookies)
     .then((results) => {
-
       if (!results.validToken) {
         // Destroy cookies. Redirect to login.
         const expires = moment().subtract(1, 'M').format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
@@ -108,9 +87,7 @@ app.use((req, res, next) => {
 });
 
 
-/**
-* Routes
-*/
+// Routes
 app.get('/', (req, res) => {
 
   VibesController.getAllVibes()
@@ -275,12 +252,4 @@ app.get('/callback', (req, res) => {
     console.log(error);
     res.json({ error: error });
   });
-});
-
-
-/**
-* Server start
-*/
-app.listen(8888, () => {
-  console.log('CO-Q up and running!');
 });

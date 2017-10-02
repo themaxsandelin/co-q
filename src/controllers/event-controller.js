@@ -144,6 +144,34 @@ function EventController() {
     });
   }
 
+  function getEventById(eventId, user) {
+    return new Promise((resolve, reject) => {
+      Event.getById(eventId)
+        .then((event) => {
+          if (!event) return reject('Event not found.');
+
+          const attendeesObj = event.attendees;
+          event.attendees = [];
+          if (attendeesObj) {
+            Object.keys(attendeesObj).forEach((id) => {
+              event.attendees.push(attendeesObj[id]);
+            });
+          }
+
+          const hasPassword = event.hasOwnProperty('password');
+
+          event.isAuthor = (user.uid === event.author.uid);
+          event.isAttending = (event.isAuthor || event.attendees.indexOf(user.uid) > -1);
+          event.needsPassword = (!event.isAuthor && hasPassword && !event.isAttending);
+
+          delete event.password;
+          delete event.salt;
+          resolve(event);
+        })
+      .catch((error) => reject(error));
+    });
+  }
+
   function singupUserForEvent(user, body) {
     return new Promise((resolve, reject) => {
       if (!body.eventId) return reject('Missing eventId parameter.');
@@ -198,6 +226,7 @@ function EventController() {
       Event.getById(eventId)
         .then((event) => {
           if (!event) return reject('Event not found.');
+          console.log('Fetched event.');
 
           const attendeesObj = event.attendees;
           event.attendees = [];
@@ -211,13 +240,19 @@ function EventController() {
           var genreVec = [];
           UserController.getMultipleUserTokensById(event.attendees)
             .then((tokens) => {
+              console.log('Fetched user tokens.');
               SpotifyController.getTopGenresForEvent(tokens)
                 .then((genres) => {
+                  console.log('Fetched top genres.');
                   SongSelector.getTopTracksForEvent(event, tokens)
                       .then((tracks) => {
+                        console.log('Fetched top tracks.');
                         SpotifyController.getSongsFromSeeds(user.spotify.accessToken, tracks, genres)
-                          .then((recommendation) => resolve(recommendation.tracks))
-                        .catch((error) => reject(error))
+                          .then((recommendation) => {
+                            console.log('Done!');
+                            resolve(recommendation.tracks);
+                          })
+                        .catch((error) => reject(error));
                       })
                     .catch((error) => reject(error));
                   })
@@ -236,6 +271,7 @@ function EventController() {
     getAllEventSlugs,
     getAllUserSpecificEvents,
     getEventBySlug,
+    getEventById,
     singupUserForEvent,
     removeEventAttendee,
     startEvent

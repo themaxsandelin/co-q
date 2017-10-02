@@ -1,3 +1,28 @@
+const socket = new WebSocket('ws://localhost:8888/socket/event/' + eventId, 'echo-protocol');
+
+socket.addEventListener('open', () => {
+  console.log('Socket connected, wohoo! :D');
+});
+
+socket.addEventListener('message', (e) => {
+  const message = JSON.parse(e.data);
+  console.log('New socket message!');
+  console.log(message);
+
+  if (message.update === 'user-connected' || message.update === 'user-disconnected') {
+    updateUserConnection(message.update, message.user);
+  }
+});
+
+function updateUserConnection(update, user) {
+  const userNode = document.querySelector('ul.user-list li[data-user=' + user.uid + ']');
+  if (update === 'user-connected') {
+    userNode.classList.add('connected');
+  } else {
+    userNode.classList.remove('connected');
+  }
+}
+
 const eventPassword = document.getElementById('event-password');
 
 const joinButton = document.getElementById('join-button');

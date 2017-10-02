@@ -19,7 +19,7 @@
       <div class="user-list-container">
         <p class="head">Author</p>
         <ul class="user-list">
-          <li>
+          <li data-user="{{ event.author.uid }}">
             <div class="avatar" style="background: url({{#if event.author.avatar }}{{ event.author.avatar }}{{ else }}/img/default.jpg{{/if}}) no-repeat center; background-size: cover;">
               <div class="indicator"></div>
             </div>
@@ -32,7 +32,7 @@
         <p class="head">Attendees</p>
         <ul class="user-list">
           {{#each event.attendees as |attendee i|}}
-            <li>
+            <li data-user="{{ attendee.uid }}">
               <div class="avatar" style="background: url({{#if attendee.avatar }}{{ attendee.avatar }}{{ else }}/img/default.jpg{{/if}}) no-repeat center; background-size: cover;">
                 <div class="indicator"></div>
               </div>
@@ -104,10 +104,11 @@
 
 {{/if}}
 
-{{#if event.isAuthor}}
-<script>var spotifyAuth = JSON.parse('{{{ jsonAuth }}}');</script>
-<script src="https://sdk.scdn.co/spotify-player.js"></script>
-<script src="/js/event-admin.js"></script>
-{{/if}}
 <script> var eventId = '{{{ event.id }}}'; </script>
 <script src="/js/event.js"></script>
+
+{{#if event.isAuthor}}
+  <script>var spotifyAuth = JSON.parse('{{{ jsonAuth }}}');</script>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+  <script src="/js/event-admin.js"></script>
+{{/if}}

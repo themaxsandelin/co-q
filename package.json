@@ -39,7 +39,8 @@
     "helmet": "^3.8.2",
     "mathjs": "^3.16.3",
     "moment": "^2.18.1",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "websocket": "^1.0.24"
   },
   "devDependencies": {
     "babel-preset-env": "^1.6.0",
