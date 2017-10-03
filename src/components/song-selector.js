@@ -166,9 +166,30 @@ function SongSelector() {
                   });
 
                 })
-              .catch((error) => reject('getSongsForAllUsers failed'));
+              .catch((error) => reject(error));
             })
-          .catch((error) => console.log('OH SHIT'));
+          .catch((error) => reject(error));
+  }
+
+  /**
+  * Generates a custom vibe based on the submitted track ids
+  * @param {Array} tracks
+  * @param {string} vibeName
+  * @return {Object} vibe
+  */
+  function generateVibeFromTracks(tracks, vibeName) {
+    return new Promise((resolve, reject) => {
+      // Verify that the input is valid
+      if (!Array.isArray(tracks) return reject('Please provide an array of track ids');
+      if (!(typeof vibeName === 'string')) return reject('Please provide a string as vibe name');
+      //Get track info for all tracks
+
+      //Extract only the features used in vibes
+
+      //Calculate the mean for each parameter. NOTE: Vibes are stored non-normalized!
+      
+    })
+    .catch((error) => reject(error));
   }
 
   return {
