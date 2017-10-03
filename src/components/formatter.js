@@ -41,7 +41,7 @@ function Formatter() {
   function filterObjectToArray(raw, keys) {
     filteredArray = [];
     Object.keys(raw).filter(key => keys.includes(key)).reduce((obj, key) => {
-      filteredArray.push(raw[key]);      
+      filteredArray.push(raw[key]);
     }, {});
     return filteredArray;
   }
@@ -69,6 +69,20 @@ function Formatter() {
     return ids;
   }
 
+  function formatEventAttendees(event) {
+    const attendeesObj = event.attendees;
+    event.attendees = [];
+
+    if (attendeesObj) {
+      Object.keys(attendeesObj).forEach((id) => {
+        event.attendees.push(attendeesObj[id]);
+      });
+    }
+    event.attendees.push(event.author.uid);
+
+    return event.attendees;
+  }
+
   return {
     formatObjectKeys,
     formatObjectKeysMulti,
@@ -76,7 +90,8 @@ function Formatter() {
     filterObjectToArray,
     filterObjects,
     formatSpotifyAuth,
-    trackIdsFromRecommendation
+    trackIdsFromRecommendation,
+    formatEventAttendees
   };
 }
 

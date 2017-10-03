@@ -597,7 +597,7 @@ section.modal-container {
     width: 0px;
     flex-grow: 1;
     margin: 0 0 0 20px;
-
+    position: relative;
   }
 }
 
@@ -675,11 +675,177 @@ section.modal-container {
   }
 }
 
+.player-init {
+  width: 100%;
+  height: 240px;
+  background: #121212;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  margin: 0 0 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  transform: scale(0.9);
+  opacity: 0;
+
+  transition: opacity 0.4s ease, transform 0.4s ease;
+
+  &.display {
+    display: flex;
+  }
+
+  &.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.ready .info {
+    transform: translate3d(0px, -10px, 0px);
+
+    .loader-wrapper {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .button-wrapper {
+      opacity: 1;
+      transform: translate3d(0px, 0px, 0px);
+
+      button {
+        pointer-events: all;
+      }
+    }
+  }
+
+  &.starting .info {
+    transform: translate3d(0px, -15px, 0px);
+
+    .loader-wrapper {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .button-wrapper {
+      opacity: 0;
+      transform: translate3d(0px, 10px, 0px);
+
+      button {
+        pointer-events: none;
+      }
+    }
+
+    .progress-wrapper {
+      opacity: 1;
+      transform: translate3d(0px, 0px, 0px);
+      pointer-events: all;
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    transition: transform 0.2s ease;
+
+    h3 {
+      margin: 0 0 20px;
+    }
+
+    .loader-wrapper {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .button-wrapper {
+      width: 140px;
+      height: 44px;
+      position: absolute;
+      top: 46px;
+      left: 50%;
+      margin-left: -70px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      transform: translate3d(0px, 10px, 0px);
+
+      transition: transform 0.2s ease, opacity 0.2s ease;
+
+      button {
+        pointer-events: none;
+      }
+    }
+
+    .progress-wrapper {
+      width: 480px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 64px;
+      left: 50%;
+      margin-left: -240px;
+
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0px, 10px, 0px);
+
+      transition: opacity 0.2s ease, transform 0.2s ease;
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: #454545;
+        overflow: hidden;
+        position: relative;
+
+        .progress {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          border-radius: 2px;
+          background: #1DB954;
+          top: 0;
+          left: -100%;
+
+          transition: transform 1s ease;
+        }
+      }
+
+      p {
+        color: #CBCBCB;
+        margin: 15px 0 0;
+      }
+    }
+  }
+}
+
 .player-container {
   width: 100%;
   height: 240px;
-  display: flex;
   flex-wrap: wrap;
+  display: none;
+  opacity: 0;
+  transform: translate3d(0px, 20px, 0px);
+
+  transition: opacity 0.4s ease, transform 0.4s ease;
+
+  &.display {
+    display: flex;
+  }
+
+  &.show {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
 
   .artwork-wrapper {
     width: 240px;
@@ -799,6 +965,21 @@ table.player-queue {
   margin: 20px 0 0;
   border-collapse: separate;
 
+  transition: opacity 0.4s ease, transform 0.4s ease;
+
+  display: none;
+  opacity: 0;
+  transform: translate3d(0px, 20px, 0px);
+
+  &.display {
+    display: table;
+  }
+
+  &.show {
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+
   thead {
     width: 100%;
 
@@ -874,5 +1055,30 @@ table.player-queue {
         }
       }
     }
+  }
+}
+
+
+.loader-wrapper {
+  width: 30px;
+  height: 30px;
+  position: relative;
+
+  .loader {
+    width: 100%;
+    height: 100%;
+    background: url(./icons/loader.svg) no-repeat center;
+    background-size: 30px;
+    animation: loader 0.6s infinite linear;
+  }
+}
+
+@keyframes loader {
+  0% {
+    transform: rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateZ(360deg);
   }
 }

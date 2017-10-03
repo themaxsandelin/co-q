@@ -5,7 +5,7 @@
     <p>Vibe: {{ event.vibeName }}</p>
     <div class="button-wrapper">
       {{#if event.isAuthor }}
-        <button class="primary" id="start-event">Start event</button>
+        <!-- <button class="primary" id="start-event">Start event</button> -->
         <button>Edit event</button>
       {{else}}
         <button class="warning" id="leave-button">Leave event</button>
@@ -46,6 +46,32 @@
 
     <article>
 
+      <div class="player-init display show" id="player-init">
+        <div class="info">
+          <h3 id="player-status">
+            {{#if event.isAuthor }}
+              Initializing player..
+            {{ else }}
+              Waiting for author to start the event..
+            {{/if}}
+          </h3>
+          <div class="loader-wrapper">
+            <div class="loader"></div>
+          </div>
+
+          <div class="button-wrapper">
+            <button class="primary" id="start-event">Start event</button>
+          </div>
+
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div class="progress" id="start-progress"></div>
+            </div>
+            <p id="progress-info"></p>
+          </div>
+        </div>
+      </div>
+
       <div class="player-container" id="player">
         <div class="artwork-wrapper">
           <div class="artwork" id="artwork"></div>
@@ -54,15 +80,17 @@
           <h3 id="track-name"></h3>
           <p id="artist"></p>
 
-          <div class="controls">
-            <div class="control prev" id="prev"></div>
-            <div class="control margin paused" id="toggle"></div>
-            <div class="control next" id="next"></div>
-          </div>
+          {{#if event.isAuthor }}
+            <div class="controls">
+              <div class="control prev" id="prev"></div>
+              <div class="control margin paused" id="toggle"></div>
+              <div class="control next" id="next"></div>
+            </div>
+          {{/if}}
 
           <div class="tracker">
-            <p id="progress"></p>
-            <p id="duration"></p>
+            <p id="track-progress"></p>
+            <p id="track-duration"></p>
             <div class="track">
               <div class="marker" id="marker"></div>
             </div>

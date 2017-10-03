@@ -1,12 +1,13 @@
 // Modules
 const WebSocketServer = require('websocket').server;
 
+// Components
+const Generator = require('./generator.js')();
+const Formatter = require('./formatter.js')();
+
 // Controllers
 const UserController = require('../controllers/user-controller.js')();
 const EventController = require('../controllers/event-controller.js')();
-
-// Components
-const Generator = require('./generator.js')();
 
 function Socket(server) {
   const connections = {};
@@ -55,6 +56,21 @@ function Socket(server) {
     }));
   }
 
+  function startEvent(connection, ) {
+    EventController.startEvent(connection.event, connection.user, (update) => {
+      sendConnectionUpdateToAll(connections[connection.event.id], update);
+    });
+    sendConnectionUpdateToAll(connections[connection.event.id], { update: 'event-started' });
+  }
+
+  function sendUpdateToAttendees(connections, update) {
+    if (connections.attendees) {
+      Object.keys(connections.attendees).forEach((id) => {
+        connections.attendees[id].sendUTF(JSON.stringify(update));
+      });
+    }
+  }
+
   wsServer.on('request', (request) => {
     if (!validateSocketOrigin(request)) return request.reject();
 
@@ -85,7 +101,9 @@ function Socket(server) {
           .then((event) => {
             const connection = request.accept('echo-protocol', request.origin);
             connection.id = Generator.generateUniqueString(64);
-            connection.eventId = eventId;
+            connection.event = event;
+            connection.event.id = eventId;
+            connection.event.attendees = Formatter.formatEventAttendees(event);
             connection.isEventAuthor = event.isAuthor;
             connection.user = user;
             // console.log('New connection created width ID ' + connection.id);
@@ -105,8 +123,8 @@ function Socket(server) {
 
               Create the connection Object like this to more easily send event updates to everyone connected to that event.
             */
-            if (!connections[eventId]) connections[eventId] = { author: {}, attendees: {} };
-            sendConnectionUpdateToAll(connections[connection.eventId], {
+            if (!connections[connection.event.id]) connections[connection.event.id] = { author: {}, attendees: {} };
+            sendConnectionUpdateToAll(connections[connection.event.id], {
               'update': 'user-connected',
               'user': {
                 uid: connection.user.uid,
@@ -114,21 +132,33 @@ function Socket(server) {
               }
             });
             if (connection.isEventAuthor) {
-              connections[connection.eventId].author[connection.id] = connection;
+              connections[connection.event.id].author[connection.id] = connection;
             } else {
-              connections[connection.eventId].attendees[connection.id] = connection;
+              connections[connection.event.id].attendees[connection.id] = connection;
             }
-            sendConnectedUsersToConnection(connections[connection.eventId], connection);
+            sendConnectedUsersToConnection(connections[connection.event.id], connection);
+
+
+            connection.on('message', (message) => {
+              const data = JSON.parse(message.utf8Data);
+              if (data.action === 'start-event') {
+                if (!connection.isEventAuthor) return connection.sendUTF(JSON.stringify({ error: 'invalidRequest', reason: 'You are not the author of this event.' }));
+
+                startEvent(connection);
+              } else if (data.action === 'update-attendee-player') {
+                sendUpdateToAttendees(connections[connection.event.id], { update: 'player-update', player: data.player });
+              }
+            });
 
             connection.on('close', (reasonCode, description) => {
               // console.log('Connection ' + connection.id + ' closed.');
               if (connection.isEventAuthor) {
-                delete connections[connection.eventId].author[connection.id];
+                delete connections[connection.event.id].author[connection.id];
               } else {
-                delete connections[connection.eventId].attendees[connection.id];
+                delete connections[connection.event.id].attendees[connection.id];
               }
 
-              sendConnectionUpdateToAll(connections[connection.eventId], {
+              sendConnectionUpdateToAll(connections[connection.event.id], {
                 'update': 'user-disconnected',
                 'user': {
                   uid: connection.user.uid,

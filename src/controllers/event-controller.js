@@ -220,50 +220,33 @@ function EventController() {
     });
   }
 
-  function startEvent(eventId, user) {
-    return new Promise((resolve, reject) => {
-      if (!eventId) return reject('Missing eventId parameter');
-      Event.getById(eventId)
-        .then((event) => {
-          if (!event) return reject('Event not found.');
-          console.log('Fetched event.');
+  function startEvent(event, user, updateCallback) {
+    updateCallback({ update: 'start-event-progress', progress: 20, message: 'Loading music tastes..' });
 
-          const attendeesObj = event.attendees;
-          event.attendees = [];
+    UserController.getMultipleUserTokensById(event.attendees)
+      .then((tokens) => {
+        updateCallback({ update: 'start-event-progress', progress: 40, message: 'Loading top genres..' });
 
-          if (attendeesObj) {
-            Object.keys(attendeesObj).forEach((id) => {
-              event.attendees.push(attendeesObj[id]);
-            });
-          }
-          event.attendees.push(event.author.uid);
-          var genreVec = [];
-          UserController.getMultipleUserTokensById(event.attendees)
-            .then((tokens) => {
-              console.log('Fetched user tokens.');
-              SpotifyController.getTopGenresForEvent(tokens)
-                .then((genres) => {
-                  console.log('Fetched top genres.');
-                  SongSelector.getTopTracksForEvent(event, tokens)
-                      .then((tracks) => {
-                        console.log('Fetched top tracks.');
-                        SpotifyController.getSongsFromSeeds(user.spotify.accessToken, tracks, genres)
-                          .then((recommendation) => {
-                            console.log('Done!');
-                            resolve(recommendation.tracks);
-                          })
-                        .catch((error) => reject(error));
-                      })
-                    .catch((error) => reject(error));
-                  })
-                .catch((error) => reject(error));
+        SpotifyController.getTopGenresForEvent(tokens)
+          .then((genres) => {
+            updateCallback({ update: 'start-event-progress', progress: 70, message: 'Loading top tracks..' });
+
+            SongSelector.getTopTracksForEvent(event, tokens)
+                .then((tracks) => {
+                  updateCallback({ update: 'start-event-progress', progress: 90, message: 'Computing music data and generating queue..' });
+
+                  SpotifyController.getSongsFromSeeds(user.spotify.accessToken, tracks, genres)
+                    .then((recommendation) => {
+                      updateCallback({ update: 'start-event-progress', progress: 100, message: 'Done!', tracks: recommendation.tracks });
+                    })
+                  .catch((error) => reject(error));
+                })
+              .catch((error) => reject(error));
             })
-
           .catch((error) => reject(error));
-        })
-      .catch((error) => reject(error));
+      })
 
-    });
+    .catch((error) => reject(error));
   }
 
   return {

@@ -175,20 +175,6 @@ app.post('/leave-event', (req, res) => {
   })
 });
 
-app.post('/start-event', (req, res) => {
-  if (!req.body.eventId) return reject('Missing eventId paramater.');
-
-  EventController.startEvent(req.body.eventId, req.user)
-    .then((songs) => {
-      res.json(songs);
-    })
-  .catch((error) => {
-    console.log(error);
-    res.json({ error: error });
-  });
-});
-
-
 app.get('/login', (req, res) => {
   res.render('login');
 });
