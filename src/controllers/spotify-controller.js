@@ -131,6 +131,13 @@ function SpotifyController() {
 
         if (data.error) return reject(data.error);
 
+        //Verify that audio features were received
+        try {
+          if (data.audio_features[0] == null) return reject('No trackInfo received from Spotify api in getMultipleSongInfosByIds.');  
+        }
+        catch(e) {
+          return reject('Invalid data from Spotify api in getMultipleSongInfosByIds.');
+        }      
         resolve(data);
 
       });
