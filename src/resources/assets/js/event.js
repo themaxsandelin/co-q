@@ -1,31 +1,3 @@
-const socket = new WebSocket('ws://localhost:8888/socket/event/' + eventId, 'echo-protocol');
-
-socket.addEventListener('open', () => {
-  console.log('Socket connected, wohoo! :D');
-});
-
-socket.addEventListener('message', (e) => {
-  const message = JSON.parse(e.data);
-  console.log('New socket message!');
-  console.log(message);
-
-  if (message.update === 'user-connected' || message.update === 'user-disconnected') {
-    updateUsersConnected(message.update, [message.user]);
-  } else if (message.update === 'all-users-connected') {
-    updateUsersConnected(message.update, message.users);
-  } else if (message.update === 'event-started') {
-    showStartProgress();
-  } else if (message.update === 'start-event-progress') {
-    updateStartProgress(message);
-  } else if (message.update === 'player-update') {
-    updateAttendeePlayer(message.player);
-  }
-});
-
-socket.addEventListener('close', () => {
-  console.log('Socket connection closed :(');
-});
-
 let tracks;
 let playingIndex = 0;
 
@@ -35,7 +7,7 @@ const progressStatus = document.getElementById('progress-info');
 
 const playerNode = document.getElementById('player');
 const queue = document.getElementById('player-queue');
-const tableBody = queue.querySelector('tbody');
+const tableBody = document.querySelector('#player-queue tbody');
 const artwork = document.getElementById('artwork');
 const trackName = document.getElementById('track-name');
 const artist = document.getElementById('artist');
@@ -215,4 +187,35 @@ function selectTrackRow(track) {
 function updateAttendeePlayer(player) {
   updatePlayerTrack(player.track_window.current_track, player.position);
   selectTrackRow(player.track_window.current_track);
+}
+
+let socket;
+if (isAttending) {
+  socket = new WebSocket('ws://' + window.location.host + '/socket/event/' + eventId, 'echo-protocol');
+
+  socket.addEventListener('open', () => {
+    console.log('Socket connected, wohoo! :D');
+  });
+
+  socket.addEventListener('message', (e) => {
+    const message = JSON.parse(e.data);
+    console.log('New socket message!');
+    console.log(message);
+
+    if (message.update === 'user-connected' || message.update === 'user-disconnected') {
+      updateUsersConnected(message.update, [message.user]);
+    } else if (message.update === 'all-users-connected') {
+      updateUsersConnected(message.update, message.users);
+    } else if (message.update === 'event-started') {
+      showStartProgress();
+    } else if (message.update === 'start-event-progress') {
+      updateStartProgress(message);
+    } else if (message.update === 'player-update') {
+      updateAttendeePlayer(message.player);
+    }
+  });
+
+  socket.addEventListener('close', () => {
+    console.log('Socket connection closed :(');
+  });
 }

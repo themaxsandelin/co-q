@@ -132,7 +132,10 @@
 
 {{/if}}
 
-<script> var eventId = '{{{ event.id }}}'; </script>
+<script>
+  var eventId = '{{{ event.id }}}';
+  var isAttending = {{{ event.isAttending }}};
+</script>
 <script src="/js/event.js"></script>
 
 {{#if event.isAuthor}}

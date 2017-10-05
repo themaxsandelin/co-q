@@ -13,11 +13,6 @@ function Socket(server) {
   const connections = {};
   const wsServer = new WebSocketServer({ httpServer: server, path: '/socket/*', autoAcceptConnections: false });
 
-  function validateSocketOrigin(request) {
-    const origin = request.remoteAddress.replace(/^.*:/, '');
-    return (origin === '127.0.0.1' || origin === '1'); // Make sure it's on the same network.
-  }
-
   function sendConnectionUpdateToAll(connectionObj, update) {
     if (connectionObj.author) {
       Object.keys(connectionObj.author).forEach((id) => {
@@ -72,8 +67,6 @@ function Socket(server) {
   }
 
   wsServer.on('request', (request) => {
-    if (!validateSocketOrigin(request)) return request.reject();
-
     let hasToken = false;
     let hasUid = false;
     const cookies = {};
