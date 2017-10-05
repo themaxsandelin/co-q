@@ -166,9 +166,9 @@ function SongSelector() {
                   });
 
                 })
-              .catch((error) => reject('getSongsForAllUsers failed'));
+              .catch((error) => reject(error));
             })
-          .catch((error) => console.log('OH SHIT'));
+          .catch((error) => reject(error));
   }
 
   return {
